@@ -1,0 +1,71 @@
+# Apache Configuration for Cabo Bay
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Remove .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [NC,L]
+
+# Redirect index.html to index.php
+RewriteRule ^index\.html$ /index.php [R=301,L]
+
+# Security Headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+# Cache Control
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|webp|avif)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+
+<FilesMatch "\.(html|htm|php)$">
+    Header set Cache-Control "max-age=3600, private, must-revalidate"
+</FilesMatch>
+
+# Protect sensitive files
+<FilesMatch "^(config|\.htaccess|pricing\.json)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "^\.(htaccess|htpasswd|git|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Error Pages
+ErrorDocument 404 /404.php
+ErrorDocument 403 /403.php
+ErrorDocument 500 /500.php
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Prevent hotlinking
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^https://(www\.)?cabobay\.com/.*$ [NC]
+RewriteRule \.(jpg|jpeg|png|gif|ico|svg)$ - [F]
+
+# Redirect non-www to www (optional)
+# RewriteCond %{HTTP_HOST} ^cabobay\.com [NC]
+# RewriteRule ^(.*)$ https://www.cabobay.com/$1 [R=301,L]
+
+# Redirect www to non-www (optional)
+# RewriteCond %{HTTP_HOST} ^www\.cabobay\.com [NC]
+# RewriteRule ^(.*)$ https://cabobay.com/$1 [R=301,L]
+
+# Block bad bots
+RewriteCond %{HTTP_USER_AGENT} (ahrefs|semrush|mj12bot|dotbot) [NC]
+RewriteRule .* - [F,L]

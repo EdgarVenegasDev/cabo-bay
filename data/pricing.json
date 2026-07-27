@@ -1,0 +1,140 @@
+{
+  "zones": [
+    {
+      "name": "San José del Cabo",
+      "areas": [
+        "Barcelo Grand Faro",
+        "Krystal Grand Los Cabos",
+        "Hyatt Place",
+        "Hyatt Place Los Cabos",
+        "Hyatt Ziva Los Cabos",
+        "Royal Solaris Los Cabos",
+        "Posada Real Los Cabos",
+        "Hotel El Ganzo",
+        "Hotel Casa Natalia",
+        "Secrets Puerto Los Cabos",
+        "JW Marriott Los Cabos Beach Resort & Spa",
+        "Marriott Puerto Los Cabos",
+        "Club Campestre San José",
+        "Misión del Sol",
+        "One World Hotel",
+        "Baja Brewing Company Hotel"
+      ],
+      "oneWay": 65,
+      "roundTrip": 120
+    },
+    {
+      "name": "Corridor",
+      "areas": [
+        "One & Only Palmilla",
+        "Cabo Azul Resort",
+        "Cabo Azul Resort & Spa",
+        "Meliá Cabo Real Beach & Golf Resort",
+        "Hilton Los Cabos Beach & Golf Resort",
+        "Marquis Los Cabos",
+        "Las Ventanas al Paraíso",
+        "Rosewood Las Ventanas",
+        "Garza Blanca",
+        "Le Blanc",
+        "Grand Velas Los Cabos",
+        "Esperanza Resort",
+        "Montage Los Cabos",
+        "Sheraton Grand Los Cabos Hacienda del Mar",
+        "Hacienda del Mar",
+        "Sirena del Mar",
+        "Querencia Resort",
+        "Vidanta Los Cabos",
+        "The Grand Mayan at Vidanta",
+        "Cabo Surf Hotel",
+        "Hacienda Encantada",
+        "Vista Encantada"
+      ],
+      "oneWay": 75,
+      "roundTrip": 140
+    },
+    {
+      "name": "Cabo San Lucas",
+      "areas": [
+        "Breathless Cabo San Lucas Resort & Spa",
+        "ME Cabo",
+        "Hacienda encantada",
+        "Vista encantada",
+        "Casa Dorada",
+        "Tesoro Los Cabos",
+        "Bahia Hotel & Beach Club",
+        "Cabo Plaza Hotel",
+        "Mar de Cortez Hotel",
+        "Marina Fiesta Resort",
+        "Cabo Villas Beach Resort",
+        "Solmar Resort",
+        "Sandos Finisterra",
+        "Pueblo Bonito Los Cabos",
+        "Pueblo Bonito Rose",
+        "Playa Grande Resort",
+        "Grand Solmar Land's End",
+        "The Resort at Pedregal",
+        "Waldorf Astoria Los Cabos",
+        "The Ridge",
+        "The Bungalows Hotel",
+        "Hotel Tropicana Inn",
+        "Riu Palace Baja",
+        "Riu Santa Fe",
+        "Club La Costa",
+        "Cabo San Lucas Country Club",
+        "Los Cabos Golf Resort",
+        "Cabo Inn Hotel",
+        "Hotel Corazon"
+      ],
+      "oneWay": 85,
+      "roundTrip": 160
+    },
+    {
+      "name": "Villas",
+      "areas": [
+        "Villa el palmar",
+        "Villa valencia",
+        "Villa el arco"
+      ],
+      "oneWay": 80,
+      "roundTrip": 160
+    },
+    {
+      "name": "Pacific Zone",
+      "areas": [
+        "Pueblo Bonito Pacifica",
+        "Pueblo Bonito Sunset Beach",
+        "Montecristo Estates",
+        "Diamante Quivira"
+      ],
+      "oneWay": 90,
+      "roundTrip": 160
+    },
+    {
+      "name": "Diamante",
+      "areas": [
+        "Nobu Hotel Los Cabos",
+        "Diamante",
+        "Hard Rock Los Cabos"
+      ],
+      "oneWay": 95,
+      "roundTrip": 180
+    },
+    {
+      "name": "La Laguna",
+      "areas": [
+        "Zacatitos",
+        "El Encanto de la Laguna"
+      ],
+      "oneWay": 100,
+      "roundTrip": 180
+    },
+    {
+      "name": "Todos Santos",
+      "areas": [
+        "Todos Santos"
+      ],
+      "oneWay": 160,
+      "roundTrip": 180
+    }
+  ]
+}

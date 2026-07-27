@@ -1,0 +1,4 @@
+.DS_Store
+config/database.php
+*.log
+node_modules/
