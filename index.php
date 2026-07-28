@@ -4,6 +4,7 @@
 <?php include 'includes/hero.php'; ?>
 <?php include 'includes/achievements.php'; ?>
 <?php include 'includes/carousel-transfers.php'; ?>
+<?php include 'includes/gallery-carousel.php'; ?>
 <?php include 'includes/parallax.php'; ?>
 <?php include 'includes/testimonials.php'; ?>
 
