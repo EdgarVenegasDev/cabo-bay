@@ -21,9 +21,9 @@ try {
 <section class="carousel-section" id="gallery">
   <div class="container">
 
-    <p class="section-eyebrow">Gallery</p>
-    <h2 class="section-title">Los Cabos in pictures</h2>
-    <p class="section-sub">A glimpse of the experiences waiting for you</p>
+    <p class="section-eyebrow">Our experiences</p>
+    <h2 class="section-title">This is cabo bay</h2>
+    <p class="section-sub">True comfort for your travels</p>
 
     <div class="carousel-container">
       <button class="carousel-btn-prev" type="button" aria-label="Anterior">&#8249;</button>
