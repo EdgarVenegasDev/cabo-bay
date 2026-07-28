@@ -46,12 +46,44 @@ try {
             echo json_encode(['ok' => true]);
             break;
 
+        case 'add_zone':
+            $name = trim($_POST['name'] ?? '');
+            if ($name === '') {
+                throw new InvalidArgumentException('El nombre de la zona no puede estar vacio.');
+            }
+
+            $slug = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $name), '-'));
+
+            $check = $pdo->prepare('SELECT id FROM zones WHERE name = ? OR slug = ?');
+            $check->execute([$name, $slug]);
+            if ($check->fetch()) {
+                throw new InvalidArgumentException('Ya existe una zona con ese nombre.');
+            }
+
+            $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(display_order), 0) FROM zones')->fetchColumn();
+
+            $stmt = $pdo->prepare(
+                'INSERT INTO zones (name, slug, one_way_price, round_trip_price, display_order, is_active)
+                 VALUES (?, ?, 0, 0, ?, 1)'
+            );
+            $stmt->execute([$name, $slug, $maxOrder + 1]);
+
+            echo json_encode(['ok' => true, 'id' => $pdo->lastInsertId(), 'slug' => $slug]);
+            break;
+
+        case 'delete_zone':
+            $id = (int)$_POST['id'];
+            $stmt = $pdo->prepare('DELETE FROM zones WHERE id = ?');
+            $stmt->execute([$id]);
+            echo json_encode(['ok' => true]);
+            break;
+
         case 'add_area':
             $zoneId = (int)$_POST['zone_id'];
             $name   = trim($_POST['name'] ?? '');
 
             if ($name === '') {
-                throw new InvalidArgumentException('El nombre del hotel/área no puede estar vacío.');
+                throw new InvalidArgumentException('El nombre del hotel/area no puede estar vacio.');
             }
 
             $stmt = $pdo->prepare('INSERT INTO areas (zone_id, name) VALUES (?, ?)');
@@ -72,7 +104,7 @@ try {
             $name = trim($_POST['name'] ?? '');
 
             if ($name === '') {
-                throw new InvalidArgumentException('El nombre no puede estar vacío.');
+                throw new InvalidArgumentException('El nombre no puede estar vacio.');
             }
 
             $stmt = $pdo->prepare('UPDATE areas SET name = ? WHERE id = ?');
@@ -82,7 +114,7 @@ try {
 
         default:
             http_response_code(400);
-            echo json_encode(['ok' => false, 'error' => 'Acción desconocida.']);
+            echo json_encode(['ok' => false, 'error' => 'Accion desconocida.']);
     }
 } catch (InvalidArgumentException $e) {
     http_response_code(422);

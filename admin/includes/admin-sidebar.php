@@ -4,8 +4,7 @@
     <ul>
         <li><a href="/admin/dashboard.php" class="<?= $current === 'dashboard.php' ? 'active' : '' ?>">Resumen</a></li>
         <li><a href="/admin/bookings.php" class="<?= $current === 'bookings.php' ? 'active' : '' ?>">Reservas</a></li>
-        <li><a href="/admin/trips.php" class="<?= $current === 'trips.php' ? 'active' : '' ?>">Viajes populares</a></li>
-        <li><a href="/admin/pricing.php" class="<?= $current === 'pricing.php' ? 'active' : '' ?>">Precios</a></li>
+        <li><a href="/admin/pricing.php" class="<?= $current === 'pricing.php' ? 'active' : '' ?>">Precios y viajes populares</a></li>
         <li><a href="/admin/gallery.php" class="<?= $current === 'gallery.php' ? 'active' : '' ?>">Galería / Carrusel</a></li>
     </ul>
 </nav>

@@ -18,10 +18,24 @@ require __DIR__ . '/includes/admin-header.php';
 
 <p style="color:#666; margin-bottom:20px; font-size:14px;">
     Cada zona alimenta dos cosas al mismo tiempo: el selector de precios en el formulario de reserva del sitio,
-    y (si está marcada como "Destacar en home") el carrusel de "rutas más populares" en la portada.
+    y (si esta marcada como "Destacar en home") el carrusel de "rutas mas populares" en la portada.
 </p>
 
 <div id="feedback" style="display:none; padding:10px 16px; border-radius:8px; margin-bottom:16px; font-size:14px;"></div>
+
+<section class="admin-table-wrap" style="margin-bottom:20px; background:#f8fafc;">
+    <h4 style="margin-bottom:10px; font-size:14px;">Agregar nueva zona</h4>
+    <form id="addZoneForm" style="display:flex; gap:8px;">
+        <input type="text" name="name" placeholder="Ej: Todos Santos Norte" required
+               style="flex:1; max-width:320px; padding:8px 10px; border:1px solid #e1e4e8; border-radius:6px; font-size:13px;">
+        <button type="submit" style="background:#0f2a3f; color:#fff; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; font-size:13px;">
+            + Crear zona
+        </button>
+    </form>
+    <p style="font-size:12px; color:#888; margin-top:8px; margin-bottom:0;">
+        Se crea con precios en $0 y sin destacar - editala abajo apenas aparezca en la lista (recarga la pagina).
+    </p>
+</section>
 
 <?php foreach ($zones as $zone): ?>
 <section class="admin-table-wrap" style="margin-bottom:20px;">
@@ -55,7 +69,7 @@ require __DIR__ . '/includes/admin-header.php';
         <div style="background:#f8fafc; border-radius:8px; padding:14px; margin-bottom:14px;">
             <label style="font-size:13px; display:flex; align-items:center; gap:6px; margin-bottom:10px; font-weight:600;">
                 <input type="checkbox" name="is_featured" <?= $zone['is_featured'] ? 'checked' : '' ?>>
-                Destacar en el carrusel de home ("viajes más populares")
+                Destacar en el carrusel de home ("viajes mas populares")
             </label>
 
             <div style="display:grid; grid-template-columns:1fr 1fr 2fr; gap:14px;">
@@ -83,19 +97,23 @@ require __DIR__ . '/includes/admin-header.php';
         <button type="submit" class="btn btn-primary btn-sm" style="background:#0f2a3f; color:#fff; border:none; padding:8px 18px; border-radius:6px; cursor:pointer;">
             Guardar cambios
         </button>
+        <button type="button" class="delete-zone" data-zone-id="<?= $zone['id'] ?>" data-zone-name="<?= htmlspecialchars($zone['name']) ?>"
+                style="background:none; border:1px solid #c0392b; color:#c0392b; padding:8px 14px; border-radius:6px; cursor:pointer; margin-left:8px;">
+            Borrar zona
+        </button>
         <span class="save-status" style="margin-left:10px; font-size:13px;"></span>
     </form>
 
     <hr style="margin:20px 0; border:none; border-top:1px solid #e1e4e8;">
 
     <div class="areas-block" data-zone-id="<?= $zone['id'] ?>">
-        <h4 style="margin-bottom:10px; font-size:14px;">Hoteles / áreas de esta zona</h4>
+        <h4 style="margin-bottom:10px; font-size:14px;">Hoteles / areas de esta zona</h4>
         <ul class="areas-list" style="list-style:none; padding:0; margin:0 0 12px 0; display:flex; flex-wrap:wrap; gap:8px;">
             <?php foreach ($areasByZone[$zone['id']] ?? [] as $area): ?>
                 <li data-area-id="<?= $area['id'] ?>"
                     style="background:#eef2f6; padding:6px 10px; border-radius:20px; font-size:13px; display:flex; align-items:center; gap:8px;">
                     <span class="area-name"><?= htmlspecialchars($area['name']) ?></span>
-                    <button type="button" class="delete-area" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold;">×</button>
+                    <button type="button" class="delete-area" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold;">&times;</button>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -129,7 +147,21 @@ async function postAction(data) {
     return res.json();
 }
 
-// Guardar zona
+document.getElementById('addZoneForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value.trim();
+    if (!name) return;
+
+    const result = await postAction({ action: 'add_zone', name });
+    if (result.ok) {
+        showFeedback('Zona creada. Recargando...', true);
+        setTimeout(() => location.reload(), 800);
+    } else {
+        showFeedback('Error: ' + result.error, false);
+    }
+});
+
 document.querySelectorAll('.zone-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -152,7 +184,7 @@ document.querySelectorAll('.zone-form').forEach(form => {
 
         const result = await postAction(data);
         if (result.ok) {
-            statusEl.textContent = 'Guardado ✓';
+            statusEl.textContent = 'Guardado';
             statusEl.style.color = '#155724';
         } else {
             statusEl.textContent = 'Error: ' + result.error;
@@ -162,7 +194,6 @@ document.querySelectorAll('.zone-form').forEach(form => {
     });
 });
 
-// Agregar area
 document.querySelectorAll('.add-area-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -172,12 +203,10 @@ document.querySelectorAll('.add-area-form').forEach(form => {
 
         const result = await postAction({ action: 'add_area', zone_id: zoneId, name });
         if (result.ok) {
-            const list = document.querySelector(`.areas-list[data-zone-id]`) ||
-                         form.closest('.areas-block').querySelector('.areas-list');
             const li = document.createElement('li');
             li.dataset.areaId = result.id;
             li.style.cssText = 'background:#eef2f6; padding:6px 10px; border-radius:20px; font-size:13px; display:flex; align-items:center; gap:8px;';
-            li.innerHTML = `<span class="area-name"></span><button type="button" class="delete-area" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold;">×</button>`;
+            li.innerHTML = '<span class="area-name"></span><button type="button" class="delete-area" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold;">&times;</button>';
             li.querySelector('.area-name').textContent = name;
             form.closest('.areas-block').querySelector('.areas-list').appendChild(li);
             form.name.value = '';
@@ -189,12 +218,11 @@ document.querySelectorAll('.add-area-form').forEach(form => {
     });
 });
 
-// Borrar area
 function attachDeleteHandler(btn) {
     btn.addEventListener('click', async () => {
         const li = btn.closest('li');
         const areaId = li.dataset.areaId;
-        if (!confirm('¿Borrar este hotel/área?')) return;
+        if (!confirm('Borrar este hotel/area?')) return;
 
         const result = await postAction({ action: 'delete_area', id: areaId });
         if (result.ok) {
@@ -206,6 +234,22 @@ function attachDeleteHandler(btn) {
     });
 }
 document.querySelectorAll('.delete-area').forEach(attachDeleteHandler);
+
+document.querySelectorAll('.delete-zone').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const zoneId = btn.dataset.zoneId;
+        const zoneName = btn.dataset.zoneName;
+        if (!confirm('Borrar la zona "' + zoneName + '" y todos sus hoteles? Las reservas ya hechas NO se borran, solo pierden el vinculo.')) return;
+
+        const result = await postAction({ action: 'delete_zone', id: zoneId });
+        if (result.ok) {
+            btn.closest('section').remove();
+            showFeedback('Zona eliminada', true);
+        } else {
+            showFeedback('Error: ' + result.error, false);
+        }
+    });
+});
 </script>
 
 <?php require __DIR__ . '/includes/admin-footer.php'; ?>
