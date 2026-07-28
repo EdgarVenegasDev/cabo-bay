@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #0b2b4f;
+  --color-navy-dark: #061a30;
+  --color-coral: #e0703f;
+  --color-coral-dark: #c85a2c;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    background-color: var(--color-navy);
+    color: white;
+    @apply px-5 py-2.5 rounded-lg font-medium text-sm transition-colors cursor-pointer border-0;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-navy-dark);
+  }
+
+  .btn-danger-outline {
+    color: #dc2626;
+    border-color: #f87171;
+    @apply border px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer bg-transparent;
+  }
+  .btn-danger-outline:hover {
+    background-color: #fef2f2;
+  }
+
+  .btn-outline-navy {
+    color: var(--color-navy);
+    border-color: var(--color-navy);
+    @apply border px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer bg-transparent;
+  }
+  .btn-outline-navy:hover {
+    background-color: var(--color-navy);
+    color: white;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none transition-shadow;
+  }
+  .input-field:focus {
+    border-color: var(--color-navy);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-navy) 20%, transparent);
+  }
+
+  .label-sm {
+    @apply text-xs font-medium text-gray-500 block mb-1.5;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm p-6;
+  }
+
+  .badge {
+    @apply text-xs font-medium px-2.5 py-1 rounded-full inline-block;
+  }
+  .badge-pending { @apply bg-amber-100 text-amber-700; }
+  .badge-confirmed { @apply bg-emerald-100 text-emerald-700; }
+  .badge-cancelled { @apply bg-red-100 text-red-700; }
+
+  .text-navy { color: var(--color-navy); }
+  .bg-navy { background-color: var(--color-navy); }
+  .text-coral { color: var(--color-coral); }
+  .text-coral-dark:hover { color: var(--color-coral-dark); }
+  .border-coral { border-color: var(--color-coral); }
+}

@@ -61,29 +61,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Cabo Bay</title>
     <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/admin/assets/admin.css">
 </head>
-<body class="login-page">
-    <form class="login-box" method="POST" autocomplete="off">
-        <h1>Cabo Bay Admin</h1>
+<body class="min-h-screen flex items-center justify-center bg-navy font-sans">
+    <form class="bg-white p-10 rounded-2xl w-80 shadow-2xl" method="POST" autocomplete="off">
+        <h1 class="text-xl font-bold text-navy mb-6">Cabo Bay Admin</h1>
 
         <?php if (!empty($_GET['expired'])): ?>
-            <p class="notice">Tu sesion expiro por inactividad.</p>
+            <p class="text-amber-600 text-sm bg-amber-50 rounded-lg px-3 py-2 mb-4">Tu sesion expiro por inactividad.</p>
         <?php endif; ?>
 
         <?php if ($error): ?>
-            <p class="error"><?= htmlspecialchars($error) ?></p>
+            <p class="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2 mb-4"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
 
-        <label for="username">Usuario</label>
-        <input type="text" id="username" name="username" required autofocus>
+        <label class="label-sm" for="username">Usuario</label>
+        <input class="input-field mb-4" type="text" id="username" name="username" required autofocus>
 
-        <label for="password">Contrasena</label>
-        <input type="password" id="password" name="password" required>
+        <label class="label-sm" for="password">Contrasena</label>
+        <input class="input-field mb-6" type="password" id="password" name="password" required>
 
-        <button type="submit">Ingresar</button>
+        <button class="btn-primary w-full" type="submit">Ingresar</button>
     </form>
 </body>
 </html>

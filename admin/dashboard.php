@@ -19,45 +19,51 @@ $pageTitle = 'Resumen';
 require __DIR__ . '/includes/admin-header.php';
 ?>
 
-<section class="admin-cards">
-    <div class="card">
-        <span class="card-number"><?= (int)$totalBookings ?></span>
-        <span class="card-label">Reservas totales</span>
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="card text-center">
+        <span class="block text-3xl font-bold text-navy"><?= (int)$totalBookings ?></span>
+        <span class="text-sm text-gray-500">Reservas totales</span>
     </div>
-    <div class="card">
-        <span class="card-number"><?= (int)$pendingBookings ?></span>
-        <span class="card-label">Pendientes</span>
+    <div class="card text-center">
+        <span class="block text-3xl font-bold text-navy"><?= (int)$pendingBookings ?></span>
+        <span class="text-sm text-gray-500">Pendientes</span>
     </div>
-    <div class="card">
-        <span class="card-number"><?= (int)$activeZones ?></span>
-        <span class="card-label">Zonas activas</span>
+    <div class="card text-center">
+        <span class="block text-3xl font-bold text-navy"><?= (int)$activeZones ?></span>
+        <span class="text-sm text-gray-500">Zonas activas</span>
     </div>
-    <div class="card">
-        <span class="card-number"><?= (int)$galleryCount ?></span>
-        <span class="card-label">Fotos en carrusel</span>
+    <div class="card text-center">
+        <span class="block text-3xl font-bold text-navy"><?= (int)$galleryCount ?></span>
+        <span class="text-sm text-gray-500">Fotos en carrusel</span>
     </div>
 </section>
 
-<section class="admin-table-wrap">
-    <h2>Ultimas reservas</h2>
-    <table class="admin-table">
+<section class="card">
+    <h2 class="text-lg font-semibold text-navy mb-4">Ultimas reservas</h2>
+    <table class="w-full text-sm">
         <thead>
-            <tr><th>Nombre</th><th>Destino</th><th>Fecha</th><th>Estado</th></tr>
+            <tr class="text-left text-gray-500 border-b border-gray-100">
+                <th class="pb-2 font-medium">Nombre</th>
+                <th class="pb-2 font-medium">Destino</th>
+                <th class="pb-2 font-medium">Fecha</th>
+                <th class="pb-2 font-medium">Estado</th>
+            </tr>
         </thead>
         <tbody>
         <?php foreach ($recentBookings as $b): ?>
-            <tr>
-                <td><?= htmlspecialchars($b['full_name']) ?></td>
-                <td><?= htmlspecialchars($b['booking_type'] === 'wedding' ? $b['hotel'] : $b['zone_name']) ?></td>
-                <td><?= htmlspecialchars($b['service_date']) ?></td>
-                <td><span class="badge badge-<?= $b['status'] ?>"><?= htmlspecialchars($b['status']) ?></span></td>
+            <tr class="border-b border-gray-50">
+                <td class="py-2.5"><?= htmlspecialchars($b['full_name']) ?></td>
+                <td class="py-2.5"><?= htmlspecialchars($b['booking_type'] === 'wedding' ? $b['hotel'] : $b['zone_name']) ?></td>
+                <td class="py-2.5"><?= htmlspecialchars($b['service_date']) ?></td>
+                <td class="py-2.5"><span class="badge badge-<?= $b['status'] ?>"><?= htmlspecialchars($b['status']) ?></span></td>
             </tr>
         <?php endforeach; ?>
         <?php if (!$recentBookings): ?>
-            <tr><td colspan="4">Todavia no hay reservas.</td></tr>
+            <tr><td colspan="4" class="text-center py-8 text-gray-400">Todavia no hay reservas.</td></tr>
         <?php endif; ?>
         </tbody>
     </table>
+    <a href="/admin/bookings.php" class="inline-block mt-4 text-coral text-sm font-medium hover:text-coral-dark">Ver todas las reservas -></a>
 </section>
 
 <?php require __DIR__ . '/includes/admin-footer.php'; ?>
