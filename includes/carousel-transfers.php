@@ -1,113 +1,47 @@
 <?php
 /**
  * includes/carousel-transfers.php
- * Rutas más populares — Los Cabos Airport Transfers
- * Vehículo único: Luxury SUV (hasta 7 pasajeros)
- *
- * image_local  → foto propia en assets/media/transfers/  (prioridad)
- * image_remote → Unsplash fallback hasta que tengas fotos propias
- *
- * Criterio de selección de rutas:
- *  1. Cabo San Lucas  — mayor volumen de turismo, más hoteles
- *  2. The Corridor    — resorts 5★, turismo de lujo
- *  3. San José del Cabo — segunda ciudad principal
- *  4. Pacific Zone    — Pueblo Bonito Pacifica/Sunset, muy solicitados
- *  5. Diamante        — Nobu + Hard Rock, clientela premium
- *  6. Villas          — Villa el Palmar/Valencia, grupos privados
+ * Rutas más populares — ahora leídas desde la tabla `zones` (is_featured = 1)
+ * en vez de un array hardcodeado. El admin controla esto desde admin/pricing.php.
  */
+require_once __DIR__ . '/../config/database.php';
 
-$popular_routes = [
-    [
-        'zone'         => 'Cabo San Lucas',
-        'slug'         => 'cabo-san-lucas',
-        'badge'        => 'Most popular',
-        'badge_class'  => 'badge-popular',
-        'featured'     => true,
-        'hotels'       => 'ME Cabo, Waldorf Astoria, Pueblo Bonito, Sandos Finisterra, Grand Solmar…',
-        'one_way'      => 85,
-        'round_trip'   => 160,
-        'image_local'  => 'assets/media/transfers/cabo-san-lucas.jpg',
-        'image_remote' => 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg',
-        'image_alt'    => 'Marina de Cabo San Lucas al atardecer',
-    ],
-    [
-        'zone'         => 'The Corridor',
-        'slug'         => 'corridor',
-        'badge'        => 'Top rated',
-        'badge_class'  => 'badge-top',
-        'featured'     => false,
-        'hotels'       => 'One&Only Palmilla, Montage, Las Ventanas al Paraíso, Garza Blanca…',
-        'one_way'      => 75,
-        'round_trip'   => 140,
-        'image_local'  => 'assets/media/transfers/corridor.jpg',
-        'image_remote' => 'https://images.pexels.com/photos/36864765/pexels-photo-36864765.jpeg',
-        'image_alt'    => 'Costa del Corredor con resorts frente al mar',
-    ],
-    [
-        'zone'         => 'San José del Cabo',
-        'slug'         => 'san-jose',
-        'badge'        => 'Best value',
-        'badge_class'  => 'badge-value',
-        'featured'     => false,
-        'hotels'       => 'Hyatt Ziva, JW Marriott, Secrets Puerto Los Cabos, Royal Solaris…',
-        'one_way'      => 65,
-        'round_trip'   => 120,
-        'image_local'  => 'assets/media/transfers/san-jose.jpg',
-        'image_remote' => 'https://images.unsplash.com/photo-1512813195386-6cf811ad3542?w=640&q=80&fit=crop',
-        'image_alt'    => 'Centro histórico de San José del Cabo',
-    ],
-    [
-        'zone'         => 'Pacific Zone',
-        'slug'         => 'pacific',
-        'badge'        => 'Scenic route',
-        'badge_class'  => 'badge-scenic',
-        'featured'     => false,
-        'hotels'       => 'Pueblo Bonito Pacifica, Pueblo Bonito Sunset Beach, Diamante Quivira…',
-        'one_way'      => 90,
-        'round_trip'   => 160,
-        'image_local'  => 'assets/media/transfers/pacific.jpg',
-        'image_remote' => 'https://images.pexels.com/photos/13201409/pexels-photo-13201409.jpeg',
-        'image_alt'    => 'Playa del Pacífico con olas y acantilados',
-    ],
-    [
-        'zone'         => 'Diamante',
-        'slug'         => 'diamante',
-        'badge'        => 'Premium',
-        'badge_class'  => 'badge-premium',
-        'featured'     => false,
-        'hotels'       => 'Nobu Hotel Los Cabos, Hard Rock Los Cabos…',
-        'one_way'      => 95,
-        'round_trip'   => 180,
-        'image_local'  => 'assets/media/transfers/diamante.jpg',
-        'image_remote' => 'https://images.pexels.com/photos/17415445/pexels-photo-17415445.jpeg',
-        'image_alt'    => 'Resort de lujo en Diamante Los Cabos',
-    ],
-    [
-        'zone'         => 'Villas',
-        'slug'         => 'villas',
-        'badge'        => 'Private',
-        'badge_class'  => 'badge-private',
-        'featured'     => false,
-        'hotels'       => 'Villa el Palmar, Villa Valencia, Villa el Arco',
-        'one_way'      => 80,
-        'round_trip'   => 160,
-        'image_local'  => 'assets/media/transfers/villas.jpg',
-        'image_remote' => 'https://images.pexels.com/photos/19168388/pexels-photo-19168388.jpeg',
-        'image_alt'    => 'Villa privada con alberca y vista al mar',
-    ],
+// Fallback de imágenes remotas (Pexels/Unsplash) por si todavía no subiste la foto local.
+// Esto es solo diseño, no dato de negocio, por eso se queda como config estática acá.
+$remote_fallbacks = [
+    'cabo-san-lucas' => 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg',
+    'corridor'       => 'https://images.pexels.com/photos/36864765/pexels-photo-36864765.jpeg',
+    'san-jose'       => 'https://images.unsplash.com/photo-1512813195386-6cf811ad3542?w=640&q=80&fit=crop',
+    'pacific'        => 'https://images.pexels.com/photos/13201409/pexels-photo-13201409.jpeg',
+    'diamante'       => 'https://images.pexels.com/photos/17415445/pexels-photo-17415445.jpeg',
+    'villas'         => 'https://images.pexels.com/photos/19168388/pexels-photo-19168388.jpeg',
 ];
 
+$popular_routes = [];
+try {
+    $pdo = Database::getConnection();
+    $stmt = $pdo->query(
+        'SELECT * FROM zones WHERE is_featured = 1 AND is_active = 1 ORDER BY display_order ASC'
+    );
+    $popular_routes = $stmt->fetchAll();
+} catch (Throwable $e) {
+    error_log('[carousel-transfers load failed] ' . $e->getMessage());
+    // $popular_routes queda vacío; la sección se oculta sola más abajo.
+}
+
 /**
- * Devuelve URL de imagen: local si existe, remota como fallback.
+ * Devuelve URL de imagen: local si existe físicamente, remota como fallback.
  */
-function route_image(array $route): string {
-    if (!empty($route['image_local']) && file_exists($route['image_local'])) {
-        return htmlspecialchars($route['image_local']);
+function route_image_db(array $route, array $remote_fallbacks): string {
+    if (!empty($route['image_path']) && file_exists(__DIR__ . '/../' . $route['image_path'])) {
+        return htmlspecialchars($route['image_path']);
     }
-    return htmlspecialchars($route['image_remote']);
+    $fallback = $remote_fallbacks[$route['slug']] ?? 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg';
+    return htmlspecialchars($fallback);
 }
 ?>
 
+<?php if ($popular_routes): ?>
 <section class="carousel-section" id="transfers">
   <div class="container">
 
@@ -123,27 +57,29 @@ function route_image(array $route): string {
 
           <?php foreach ($popular_routes as $route): ?>
 
-            <article class="card transfer-card<?= $route['featured'] ? ' transfer-card--featured' : '' ?>"
+            <article class="card transfer-card"
                      data-slug="<?= htmlspecialchars($route['slug']) ?>"
-                     data-one-way="<?= (int)$route['one_way'] ?>"
-                     data-round-trip="<?= (int)$route['round_trip'] ?>">
+                     data-one-way="<?= (float)$route['one_way_price'] ?>"
+                     data-round-trip="<?= (float)$route['round_trip_price'] ?>">
 
               <div class="card-image">
                 <img
-                  src="<?= route_image($route) ?>"
-                  alt="<?= htmlspecialchars($route['image_alt']) ?>"
+                  src="<?= route_image_db($route, $remote_fallbacks) ?>"
+                  alt="<?= htmlspecialchars($route['name']) ?> transfer"
                   loading="lazy"
                   width="640"
                   height="360"
                 >
-                <span class="card-badge <?= htmlspecialchars($route['badge_class']) ?>">
-                  <?= htmlspecialchars($route['badge']) ?>
+                <?php if (!empty($route['badge_text'])): ?>
+                <span class="card-badge <?= htmlspecialchars($route['badge_class'] ?? '') ?>">
+                  <?= htmlspecialchars($route['badge_text']) ?>
                 </span>
+                <?php endif; ?>
               </div>
 
               <div class="card-content">
-                <h3 class="card-title"><?= htmlspecialchars($route['zone']) ?></h3>
-                <p class="card-hotels"><?= htmlspecialchars($route['hotels']) ?></p>
+                <h3 class="card-title"><?= htmlspecialchars($route['name']) ?></h3>
+                <p class="card-hotels"><?= htmlspecialchars($route['hotels_summary'] ?? '') ?></p>
 
                 <!-- Toggle one way / round trip -->
                 <div class="trip-toggle" role="group" aria-label="Trip type">
@@ -162,10 +98,10 @@ function route_image(array $route): string {
 
                 <div class="card-footer">
                   <div class="card-price-wrap">
-                    <span class="card-price js-price">$<?= (int)$route['one_way'] ?></span>
+                    <span class="card-price js-price">$<?= (int)$route['one_way_price'] ?></span>
                     <small class="card-price-note">per SUV</small>
                   </div>
-                  <a href="pages/booking.php?zone=<?= urlencode($route['zone']) ?>&type=oneway&price=<?= (int)$route['one_way'] ?>"
+                  <a href="pages/booking.php?zone=<?= urlencode($route['name']) ?>&type=oneway&price=<?= (int)$route['one_way_price'] ?>"
                      class="btn btn-outline btn-sm js-book-link">
                     Book now
                   </a>
@@ -189,8 +125,8 @@ function route_image(array $route): string {
 <script>
 (function () {
     document.querySelectorAll('#transferCarousel .transfer-card').forEach(function (card) {
-        var oneWay    = parseInt(card.dataset.oneWay, 10);
-        var roundTrip = parseInt(card.dataset.roundTrip, 10);
+        var oneWay    = parseFloat(card.dataset.oneWay);
+        var roundTrip = parseFloat(card.dataset.roundTrip);
         var zone      = card.querySelector('.card-title').textContent.trim();
         var priceEl   = card.querySelector('.js-price');
         var linkEl    = card.querySelector('.js-book-link');
@@ -209,3 +145,4 @@ function route_image(array $route): string {
     });
 }());
 </script>
+<?php endif; ?>
