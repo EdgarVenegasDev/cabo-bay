@@ -9,56 +9,53 @@ $pageTitle = 'Galeria / Carrusel';
 require __DIR__ . '/includes/admin-header.php';
 ?>
 
-<p style="color:#666; margin-bottom:20px; font-size:14px;">
+<p class="text-sm text-gray-500 mb-5">
     Las fotos que subas aca (y que esten "Activa") aparecen en el carrusel de galeria de la pagina principal,
     en el orden que definas con las flechas.
 </p>
 
-<div id="feedback" style="display:none; padding:10px 16px; border-radius:8px; margin-bottom:16px; font-size:14px;"></div>
+<div id="feedback" class="hidden px-4 py-2.5 rounded-lg mb-4 text-sm"></div>
 
-<section class="admin-table-wrap" style="margin-bottom:20px; background:#f8fafc;">
-    <h4 style="margin-bottom:10px; font-size:14px;">Subir nueva foto</h4>
-    <form id="uploadForm" enctype="multipart/form-data" style="display:flex; gap:10px; flex-wrap:wrap; align-items:end;">
+<section class="card mb-5 bg-gray-50">
+    <h4 class="text-sm font-semibold text-navy mb-3">Subir nueva foto</h4>
+    <form id="uploadForm" enctype="multipart/form-data" class="flex gap-3 flex-wrap items-end">
         <div>
-            <label style="font-size:12px; color:#666; display:block; margin-bottom:4px;">Archivo (JPG, PNG o WEBP, max 5MB)</label>
-            <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>
+            <label class="label-sm">Archivo (JPG, PNG o WEBP, max 5MB)</label>
+            <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="text-sm">
         </div>
         <div>
-            <label style="font-size:12px; color:#666; display:block; margin-bottom:4px;">Descripcion (opcional)</label>
-            <input type="text" name="caption" placeholder="Ej: Atardecer en Cabo San Lucas"
-                   style="padding:8px; border:1px solid #e1e4e8; border-radius:6px; min-width:220px;">
+            <label class="label-sm">Descripcion (opcional)</label>
+            <input type="text" name="caption" placeholder="Ej: Atardecer en Cabo San Lucas" class="input-field min-w-56">
         </div>
-        <button type="submit" id="uploadBtn" style="background:#0f2a3f; color:#fff; border:none; padding:9px 20px; border-radius:6px; cursor:pointer;">
-            Subir foto
-        </button>
+        <button type="submit" id="uploadBtn" class="btn-primary">Subir foto</button>
     </form>
 </section>
 
-<section class="admin-table-wrap">
-    <div id="galleryGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;">
+<section class="card">
+    <div id="galleryGrid" class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
         <?php foreach ($photos as $p): ?>
-            <div class="photo-card" data-id="<?= $p['id'] ?>" style="border:1px solid #e1e4e8; border-radius:10px; overflow:hidden; <?= !$p['is_active'] ? 'opacity:0.5;' : '' ?>">
+            <div class="photo-card border border-gray-200 rounded-lg overflow-hidden <?= !$p['is_active'] ? 'opacity-50' : '' ?>" data-id="<?= $p['id'] ?>">
                 <img src="/assets/media/gallery/<?= htmlspecialchars($p['filename']) ?>" alt="<?= htmlspecialchars($p['alt_text'] ?? '') ?>"
-                     style="width:100%; height:140px; object-fit:cover; display:block;">
-                <div style="padding:10px;">
-                    <p style="font-size:12px; margin:0 0 8px 0; color:#444; min-height:16px;"><?= htmlspecialchars($p['caption'] ?? '') ?></p>
-                    <div style="display:flex; gap:6px; align-items:center; justify-content:space-between;">
-                        <div style="display:flex; gap:4px;">
-                            <button type="button" class="move-btn" data-dir="up" title="Mover antes" style="border:1px solid #e1e4e8; background:#fff; border-radius:4px; cursor:pointer; padding:2px 8px;">Arriba</button>
-                            <button type="button" class="move-btn" data-dir="down" title="Mover despues" style="border:1px solid #e1e4e8; background:#fff; border-radius:4px; cursor:pointer; padding:2px 8px;">Abajo</button>
+                     class="w-full h-36 object-cover block">
+                <div class="p-2.5">
+                    <p class="text-xs text-gray-600 mb-2 min-h-4"><?= htmlspecialchars($p['caption'] ?? '') ?></p>
+                    <div class="flex gap-1.5 items-center justify-between">
+                        <div class="flex gap-1">
+                            <button type="button" class="move-btn text-xs border border-gray-200 rounded px-2 py-0.5 hover:bg-gray-50" data-dir="up" title="Mover antes">Arriba</button>
+                            <button type="button" class="move-btn text-xs border border-gray-200 rounded px-2 py-0.5 hover:bg-gray-50" data-dir="down" title="Mover despues">Abajo</button>
                         </div>
-                        <label style="font-size:11px; display:flex; align-items:center; gap:4px;">
+                        <label class="text-xs flex items-center gap-1 text-gray-600">
                             <input type="checkbox" class="toggle-active" <?= $p['is_active'] ? 'checked' : '' ?>>
                             Activa
                         </label>
-                        <button type="button" class="delete-photo" style="border:none; background:none; color:#c0392b; cursor:pointer; font-size:12px;">Borrar</button>
+                        <button type="button" class="delete-photo text-xs text-red-500 hover:text-red-700">Borrar</button>
                     </div>
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
     <?php if (!$photos): ?>
-        <p style="text-align:center; color:#888; padding:30px;">Todavia no subiste ninguna foto.</p>
+        <p class="text-center text-gray-400 py-10">Todavia no subiste ninguna foto.</p>
     <?php endif; ?>
 </section>
 
@@ -66,10 +63,9 @@ require __DIR__ . '/includes/admin-header.php';
 function showFeedback(msg, ok) {
     const el = document.getElementById('feedback');
     el.textContent = msg;
-    el.style.display = 'block';
-    el.style.background = ok ? '#d4edda' : '#f8d7da';
-    el.style.color = ok ? '#155724' : '#721c24';
-    setTimeout(() => { el.style.display = 'none'; }, 3500);
+    el.classList.remove('hidden');
+    el.className = 'px-4 py-2.5 rounded-lg mb-4 text-sm ' + (ok ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700');
+    setTimeout(() => { el.classList.add('hidden'); }, 3500);
 }
 
 document.getElementById('uploadForm').addEventListener('submit', async (e) => {
@@ -130,7 +126,7 @@ document.querySelectorAll('.toggle-active').forEach(cb => {
         const id = card.dataset.id;
         const result = await postAction({ action: 'toggle_active', id });
         if (result.ok) {
-            card.style.opacity = cb.checked ? '1' : '0.5';
+            card.classList.toggle('opacity-50', !cb.checked);
             showFeedback('Actualizado', true);
         } else {
             cb.checked = !cb.checked;

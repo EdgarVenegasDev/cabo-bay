@@ -35,15 +35,14 @@ $pageTitle = 'Reservas';
 require __DIR__ . '/includes/admin-header.php';
 ?>
 
-<form method="GET" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:end;">
+<form method="GET" class="flex gap-3 mb-5 flex-wrap items-end">
     <div>
-        <label style="font-size:12px; color:#666; display:block; margin-bottom:4px;">Buscar (nombre, email, referencia)</label>
-        <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Ej: CB-A1B2C3"
-               style="padding:8px; border:1px solid #e1e4e8; border-radius:6px; min-width:220px;">
+        <label class="label-sm">Buscar (nombre, email, referencia)</label>
+        <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Ej: CB-A1B2C3" class="input-field min-w-56">
     </div>
     <div>
-        <label style="font-size:12px; color:#666; display:block; margin-bottom:4px;">Estado</label>
-        <select name="status" style="padding:8px; border:1px solid #e1e4e8; border-radius:6px;">
+        <label class="label-sm">Estado</label>
+        <select name="status" class="input-field">
             <option value="">Todos</option>
             <option value="pending" <?= $statusFilter === 'pending' ? 'selected' : '' ?>>Pending</option>
             <option value="confirmed" <?= $statusFilter === 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
@@ -51,83 +50,80 @@ require __DIR__ . '/includes/admin-header.php';
         </select>
     </div>
     <div>
-        <label style="font-size:12px; color:#666; display:block; margin-bottom:4px;">Tipo</label>
-        <select name="type" style="padding:8px; border:1px solid #e1e4e8; border-radius:6px;">
+        <label class="label-sm">Tipo</label>
+        <select name="type" class="input-field">
             <option value="">Todos</option>
             <option value="regular" <?= $typeFilter === 'regular' ? 'selected' : '' ?>>Regular</option>
             <option value="wedding" <?= $typeFilter === 'wedding' ? 'selected' : '' ?>>Wedding</option>
         </select>
     </div>
-    <button type="submit" style="background:#0f2a3f; color:#fff; border:none; padding:9px 20px; border-radius:6px; cursor:pointer;">
-        Filtrar
-    </button>
+    <button type="submit" class="btn-primary">Filtrar</button>
     <?php if ($statusFilter || $typeFilter || $search): ?>
-        <a href="/admin/bookings.php" style="padding:9px 14px; color:#666; text-decoration:none; font-size:14px;">Limpiar filtros</a>
+        <a href="/admin/bookings.php" class="text-sm text-gray-500 hover:text-gray-700 px-2 py-2.5">Limpiar filtros</a>
     <?php endif; ?>
 </form>
 
-<div id="feedback" style="display:none; padding:10px 16px; border-radius:8px; margin-bottom:16px; font-size:14px;"></div>
+<div id="feedback" class="hidden px-4 py-2.5 rounded-lg mb-4 text-sm"></div>
 
-<section class="admin-table-wrap">
-    <table class="admin-table">
+<section class="card overflow-x-auto">
+    <table class="w-full text-sm">
         <thead>
-            <tr>
-                <th>Ref</th>
-                <th>Tipo</th>
-                <th>Cliente</th>
-                <th>Destino</th>
-                <th>Viaje</th>
-                <th>Fecha</th>
-                <th>Precio</th>
-                <th>Estado</th>
-                <th></th>
+            <tr class="text-left text-gray-500 border-b border-gray-100">
+                <th class="pb-2 font-medium pr-4">Ref</th>
+                <th class="pb-2 font-medium pr-4">Tipo</th>
+                <th class="pb-2 font-medium pr-4">Cliente</th>
+                <th class="pb-2 font-medium pr-4">Destino</th>
+                <th class="pb-2 font-medium pr-4">Viaje</th>
+                <th class="pb-2 font-medium pr-4">Fecha</th>
+                <th class="pb-2 font-medium pr-4">Precio</th>
+                <th class="pb-2 font-medium pr-4">Estado</th>
+                <th class="pb-2 font-medium"></th>
             </tr>
         </thead>
         <tbody>
         <?php foreach ($bookings as $b): ?>
-            <tr data-booking-id="<?= $b['id'] ?>">
-                <td><code style="font-size:12px;"><?= htmlspecialchars($b['reference']) ?></code></td>
-                <td>
-                    <span style="font-size:11px; padding:2px 8px; border-radius:10px; background:<?= $b['booking_type'] === 'wedding' ? '#fce4ec' : '#e3f2fd' ?>;">
+            <tr class="border-b border-gray-50" data-booking-id="<?= $b['id'] ?>">
+                <td class="py-3 pr-4"><code class="text-xs bg-gray-50 px-1.5 py-0.5 rounded"><?= htmlspecialchars($b['reference']) ?></code></td>
+                <td class="py-3 pr-4">
+                    <span class="text-xs px-2 py-0.5 rounded-full <?= $b['booking_type'] === 'wedding' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700' ?>">
                         <?= $b['booking_type'] === 'wedding' ? 'Wedding' : 'Regular' ?>
                     </span>
                 </td>
-                <td>
+                <td class="py-3 pr-4">
                     <?= htmlspecialchars($b['full_name']) ?><br>
-                    <small style="color:#888;"><?= htmlspecialchars($b['email']) ?> - <?= htmlspecialchars($b['phone']) ?></small>
+                    <small class="text-gray-400"><?= htmlspecialchars($b['email']) ?> - <?= htmlspecialchars($b['phone']) ?></small>
                 </td>
-                <td>
+                <td class="py-3 pr-4">
                     <?php if ($b['booking_type'] === 'wedding'): ?>
                         <?= htmlspecialchars($b['hotel'] ?? '-') ?>
                     <?php else: ?>
                         <?= htmlspecialchars($b['area'] ?? '-') ?><br>
-                        <small style="color:#888;"><?= htmlspecialchars($b['zone_name'] ?? '') ?></small>
+                        <small class="text-gray-400"><?= htmlspecialchars($b['zone_name'] ?? '') ?></small>
                     <?php endif; ?>
                 </td>
-                <td>
+                <td class="py-3 pr-4">
                     <?= $b['trip_type'] === 'roundtrip' ? 'Round Trip' : 'One Way' ?><br>
-                    <small style="color:#888;"><?= (int)$b['passengers'] ?> pax</small>
+                    <small class="text-gray-400"><?= (int)$b['passengers'] ?> pax</small>
                 </td>
-                <td>
+                <td class="py-3 pr-4">
                     <?= htmlspecialchars($b['service_date']) ?><br>
-                    <small style="color:#888;"><?= htmlspecialchars($b['service_time']) ?></small>
+                    <small class="text-gray-400"><?= htmlspecialchars($b['service_time']) ?></small>
                 </td>
-                <td>$<?= number_format((float)$b['price'], 2) ?></td>
-                <td>
-                    <select class="status-select" data-id="<?= $b['id'] ?>"
-                            style="padding:5px 8px; border-radius:6px; border:1px solid #e1e4e8; font-size:12px;">
+                <td class="py-3 pr-4">$<?= number_format((float)$b['price'], 2) ?></td>
+                <td class="py-3 pr-4">
+                    <select class="status-select input-field text-xs py-1.5" data-id="<?= $b['id'] ?>">
                         <option value="pending" <?= $b['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
                         <option value="confirmed" <?= $b['status'] === 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
                         <option value="cancelled" <?= $b['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                     </select>
                 </td>
-                <td>
-                    <a href="mailto:<?= htmlspecialchars($b['email']) ?>" title="Enviar email" style="text-decoration:none;">Email</a>
+                <td class="py-3">
+                    <a href="mailto:<?= htmlspecialchars($b['email']) ?>" title="Enviar email" class="text-coral hover:text-coral-dark text-xs font-medium">Email</a>
                 </td>
             </tr>
         <?php endforeach; ?>
         <?php if (!$bookings): ?>
-            <tr><td colspan="9" style="text-align:center; padding:30px; color:#888;">No hay reservas que coincidan con el filtro.</td></tr>
+            <tr><td colspan="9" class="text-center py-10 text-gray-400">No hay reservas que coincidan con el filtro.</td></tr>
         <?php endif; ?>
         </tbody>
     </table>
@@ -137,10 +133,9 @@ require __DIR__ . '/includes/admin-header.php';
 function showFeedback(msg, ok) {
     const el = document.getElementById('feedback');
     el.textContent = msg;
-    el.style.display = 'block';
-    el.style.background = ok ? '#d4edda' : '#f8d7da';
-    el.style.color = ok ? '#155724' : '#721c24';
-    setTimeout(() => { el.style.display = 'none'; }, 3000);
+    el.classList.remove('hidden');
+    el.className = 'px-4 py-2.5 rounded-lg mb-4 text-sm ' + (ok ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700');
+    setTimeout(() => { el.classList.add('hidden'); }, 3000);
 }
 
 document.querySelectorAll('.status-select').forEach(select => {
