@@ -1,6 +1,7 @@
 <?php
 // api/process_booking.php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['booking_error'] = 'Invalid request method.';
@@ -16,7 +17,68 @@ function normalize_trip_type(string $raw): string {
 }
 
 /* ==============================================================
+   GUARDAR RESERVA EN MYSQL
+   Nunca debe frenar el flujo de reserva: si la BD falla, se loguea
+   el error pero el email se manda igual y el cliente ve success.php.
+   Devuelve el id insertado, o null si falló.
+   ============================================================== */
+function save_booking_to_db(array $b): ?int {
+    try {
+        $pdo = Database::getConnection();
+
+        $sql = "INSERT INTO bookings (
+                    reference, booking_type, full_name, email, phone,
+                    zone_id, zone_name, area, hotel,
+                    trip_type, passengers, service_date, service_time,
+                    flight_number, arrival_time,
+                    return_date, return_time, return_flight_number,
+                    special_requests, price, status
+                ) VALUES (
+                    :reference, :booking_type, :full_name, :email, :phone,
+                    :zone_id, :zone_name, :area, :hotel,
+                    :trip_type, :passengers, :service_date, :service_time,
+                    :flight_number, :arrival_time,
+                    :return_date, :return_time, :return_flight_number,
+                    :special_requests, :price, 'pending'
+                )";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':reference'             => $b['reference'],
+            ':booking_type'          => $b['booking_type'],
+            ':full_name'             => $b['full_name'],
+            ':email'                 => $b['email'],
+            ':phone'                 => $b['phone'],
+            ':zone_id'               => $b['zone_id'] ?? null,
+            ':zone_name'             => $b['zone_name'] ?? null,
+            ':area'                  => $b['area'] ?? null,
+            ':hotel'                 => $b['hotel'] ?? null,
+            ':trip_type'             => $b['trip_type'],
+            ':passengers'            => $b['passengers'],
+            ':service_date'          => $b['service_date'],
+            ':service_time'          => $b['service_time'],
+            ':flight_number'         => $b['flight_number'] ?: null,
+            ':arrival_time'          => $b['arrival_time'] ?: null,
+            ':return_date'           => $b['return_date'] ?: null,
+            ':return_time'           => $b['return_time'] ?: null,
+            ':return_flight_number'  => $b['return_flight_number'] ?: null,
+            ':special_requests'      => $b['special_requests'] ?: null,
+            ':price'                 => $b['price'],
+        ]);
+
+        return (int)$pdo->lastInsertId();
+
+    } catch (Throwable $e) {
+        // Nunca frenar la reserva por un fallo de BD. Solo lo dejamos en el log
+        // del servidor (Site Tools > Estadísticas > Error log) para revisarlo después.
+        error_log('[booking DB save failed] ref=' . ($b['reference'] ?? '?') . ' error=' . $e->getMessage());
+        return null;
+    }
+}
+
+/* ==============================================================
    FUNCIONES PARA EMAILS HTML CON PALETA AZUL MARINO / BLANCO
+   (sin cambios respecto a la versión original)
    ============================================================== */
 function build_html_email(string $title, string $content, string $reference = ''): string {
     $year = date('Y');
@@ -66,7 +128,6 @@ function format_detail_row(string $label, string $value): string {
     return '<p><span class="label" style="font-weight:700;color:#0a2540;display:inline-block;min-width:130px;">' . htmlspecialchars($label) . ':</span> ' . nl2br(htmlspecialchars($value)) . '</p>';
 }
 
-// Construir el contenido interior (client o admin) para wedding o regular
 function build_booking_email_content(array $data, bool $isAdmin = false, bool $isWedding = false): string {
     $content = '';
     if ($isAdmin) {
@@ -78,9 +139,9 @@ function build_booking_email_content(array $data, bool $isAdmin = false, bool $i
     }
 
     $content .= '<div class="details" style="background-color:#f8fafc;border-radius:10px;padding:16px 20px;margin:20px 0;border:1px solid #e2e8f0;">';
-    
+
     $content .= format_detail_row('Referencia', $data['reference']);
-    
+
     if ($isWedding) {
         $content .= format_detail_row('Cliente', $data['name'] . ' (' . $data['email'] . ' / ' . $data['phone'] . ')');
         $content .= format_detail_row('Hotel', $data['hotel']);
@@ -101,7 +162,6 @@ function build_booking_email_content(array $data, bool $isAdmin = false, bool $i
             $content .= '<p style="margin-top:16px; font-style:italic;">💵 Pago en efectivo directamente al conductor.</p>';
         }
     } else {
-        // Regular booking
         $content .= format_detail_row('Cliente', $data['name'] . ' (' . $data['email'] . ' / ' . $data['phone'] . ')');
         $content .= format_detail_row('Destino', $data['area'] . ' (' . $data['zone'] . ')');
         $content .= format_detail_row('Tipo de viaje', $data['trip_type_label']);
@@ -126,9 +186,9 @@ function build_booking_email_content(array $data, bool $isAdmin = false, bool $i
             $content .= '<p style="margin-top:16px; font-style:italic;">💵 Pago en efectivo al conductor (no incluye propina).</p>';
         }
     }
-    
+
     $content .= '</div>';
-    
+
     if (!$isAdmin) {
         $content .= '<p style="margin-top:20px;">Si tienes alguna pregunta o necesitas modificar tu reserva, responde a este correo o contáctanos al <strong>+52 (624) 119 3290</strong> (WhatsApp disponible).</p>';
         $content .= '<p style="margin-top:20px;">¡Disfruta tu viaje con nosotros!</p>';
@@ -136,7 +196,7 @@ function build_booking_email_content(array $data, bool $isAdmin = false, bool $i
     } else {
         $content .= '<p style="margin-top:16px; font-size:13px; background-color:#eef2ff; padding:10px; border-radius:8px;">📌 Acción requerida: Por favor verifica los datos y coordina el servicio con el cliente.</p>';
     }
-    
+
     return $content;
 }
 
@@ -199,7 +259,26 @@ if ($bookingType === 'wedding') {
 
     $reference = generate_booking_reference();
 
-    // Datos comunes para los correos
+    // Guardar en MySQL (no bloqueante: si falla, solo se loguea)
+    save_booking_to_db([
+        'reference'             => $reference,
+        'booking_type'          => 'wedding',
+        'full_name'             => $name,
+        'email'                 => $email,
+        'phone'                 => $phone,
+        'hotel'                 => $hotel,
+        'trip_type'             => $tripType,
+        'passengers'            => $passengers,
+        'service_date'          => $date,
+        'service_time'          => $time,
+        'flight_number'         => $flight_number,
+        'return_date'           => $return_date,
+        'return_time'           => $return_time,
+        'return_flight_number'  => $return_flight,
+        'special_requests'      => $special_req,
+        'price'                 => $price,
+    ]);
+
     $emailData = [
         'reference'        => $reference,
         'name'             => $name,
@@ -219,7 +298,6 @@ if ($bookingType === 'wedding') {
         'price'            => $price,
     ];
 
-    // Contenido HTML
     $userHtml = build_html_email(
         "Wedding Transfer Confirmation - $reference",
         build_booking_email_content($emailData, false, true),
@@ -258,23 +336,17 @@ foreach ($required_regular as $field) {
     }
 }
 
-// Cargar precios
-$pricingFile = __DIR__ . '/../data/pricing.json';
-if (!file_exists($pricingFile)) {
-    $_SESSION['booking_error'] = 'Pricing system unavailable.';
-    header('Location: ../error.php'); exit;
-}
-$pricingData = json_decode(file_get_contents($pricingFile), true);
-if (!$pricingData) {
-    $_SESSION['booking_error'] = 'Pricing data invalid.';
-    header('Location: ../error.php'); exit;
+// Buscar zona en MySQL (reemplaza la lectura de data/pricing.json)
+$selectedZone = null;
+try {
+    $pdo = Database::getConnection();
+    $stmt = $pdo->prepare('SELECT id, name, one_way_price, round_trip_price FROM zones WHERE name = ? AND is_active = 1 LIMIT 1');
+    $stmt->execute([$_POST['zone']]);
+    $selectedZone = $stmt->fetch();
+} catch (Throwable $e) {
+    error_log('[zone lookup failed] ' . $e->getMessage());
 }
 
-// Buscar zona
-$selectedZone = null;
-foreach ($pricingData['zones'] as $zone) {
-    if ($zone['name'] === $_POST['zone']) { $selectedZone = $zone; break; }
-}
 if (!$selectedZone) {
     $_SESSION['booking_error'] = 'Invalid destination zone.';
     header('Location: ../error.php'); exit;
@@ -282,7 +354,7 @@ if (!$selectedZone) {
 
 $tripType = normalize_trip_type($_POST['trip_type'] ?? 'oneway');
 $isRound  = $tripType === 'roundtrip';
-$price    = $isRound ? $selectedZone['roundTrip'] : $selectedZone['oneWay'];
+$price    = $isRound ? (float)$selectedZone['round_trip_price'] : (float)$selectedZone['one_way_price'];
 
 // Sanitizar
 $s = [
@@ -322,6 +394,29 @@ if ($isRound) {
 
 $reference = generate_booking_reference();
 
+// Guardar en MySQL (no bloqueante: si falla, solo se loguea)
+save_booking_to_db([
+    'reference'             => $reference,
+    'booking_type'          => 'regular',
+    'full_name'             => $s['name'],
+    'email'                 => $s['email'],
+    'phone'                 => $s['phone'],
+    'zone_id'               => $selectedZone['id'],
+    'zone_name'             => $selectedZone['name'],
+    'area'                  => $s['area'],
+    'trip_type'             => $tripType,
+    'passengers'            => $s['passengers'],
+    'service_date'          => $s['date'],
+    'service_time'          => $s['time'],
+    'flight_number'         => $s['flight_number'],
+    'arrival_time'          => $s['arrival_time'],
+    'return_date'           => $s['return_date'],
+    'return_time'           => $s['return_time'],
+    'return_flight_number'  => $s['return_flight_number'],
+    'special_requests'      => $s['special_requests'],
+    'price'                 => $s['price'],
+]);
+
 // Datos para correos (regular)
 $emailDataRegular = [
     'reference'            => $reference,
@@ -344,7 +439,6 @@ $emailDataRegular = [
     'price'                => $s['price'],
 ];
 
-// Construir emails HTML
 $userHtmlRegular = build_html_email(
     "Booking Confirmation - $reference",
     build_booking_email_content($emailDataRegular, false, false),
