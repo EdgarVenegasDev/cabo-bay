@@ -86,7 +86,7 @@ define('EMAIL_FROM_NAME', SITE_NAME);
 define('EMAIL_REPLY_TO', BOOKING_EMAIL);
 
 // Modo debug (cambiar a false en producción)
-define('DEBUG_MODE', false);
+define('DEBUG_MODE', true);
 if (DEBUG_MODE) {
 
     ini_set('display_errors', 1);
