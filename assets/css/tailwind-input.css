@@ -6,8 +6,8 @@
   --color-navy-light: #1a4a7a;
   --color-coral: #e0703f;
   --color-coral-dark: #c85a2c;
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-serif: "Poppins", "Inter", system-ui, sans-serif;
 }
 
 @layer utilities {
