@@ -1,13 +1,6 @@
 <?php
-/**
- * includes/carousel-transfers.php
- * Rutas más populares — ahora leídas desde la tabla `zones` (is_featured = 1)
- * en vez de un array hardcodeado. El admin controla esto desde admin/pricing.php.
- */
 require_once __DIR__ . '/../config/database.php';
 
-// Fallback de imágenes remotas (Pexels/Unsplash) por si todavía no subiste la foto local.
-// Esto es solo diseño, no dato de negocio, por eso se queda como config estática acá.
 $remote_fallbacks = [
     'cabo-san-lucas' => 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg',
     'corridor'       => 'https://images.pexels.com/photos/36864765/pexels-photo-36864765.jpeg',
@@ -26,12 +19,8 @@ try {
     $popular_routes = $stmt->fetchAll();
 } catch (Throwable $e) {
     error_log('[carousel-transfers load failed] ' . $e->getMessage());
-    // $popular_routes queda vacío; la sección se oculta sola más abajo.
 }
 
-/**
- * Devuelve URL de imagen: local si existe físicamente, remota como fallback.
- */
 function route_image_db(array $route, array $remote_fallbacks): string {
     if (!empty($route['image_path']) && file_exists(__DIR__ . '/../' . $route['image_path'])) {
         return htmlspecialchars($route['image_path']);
@@ -39,95 +28,81 @@ function route_image_db(array $route, array $remote_fallbacks): string {
     $fallback = $remote_fallbacks[$route['slug']] ?? 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg';
     return htmlspecialchars($fallback);
 }
+
+$badgeColors = [
+    'badge-popular' => 'bg-coral text-white',
+    'badge-top'     => 'bg-navy text-white',
+    'badge-value'   => 'bg-emerald-600 text-white',
+    'badge-scenic'  => 'bg-sky-600 text-white',
+    'badge-premium' => 'bg-amber-500 text-white',
+    'badge-private' => 'bg-slate-700 text-white',
+];
 ?>
 
 <?php if ($popular_routes): ?>
-<section class="carousel-section" id="transfers">
-  <div class="container">
+<section class="py-20" id="transfers">
+  <div class="max-w-7xl mx-auto px-6">
 
-    <p class="section-eyebrow">Most popular routes</p>
-    <h2 class="section-title">Airport transfers</h2>
-    <p class="section-sub">Los Cabos Airport &middot; Luxury SUV &middot; Up to 7 passengers</p>
+    <p class="text-coral text-sm font-semibold uppercase tracking-wider mb-2">Most popular routes</p>
+    <h2 class="font-serif text-4xl text-navy font-semibold mb-2">Airport transfers</h2>
+    <p class="text-slate-500 mb-10">Los Cabos Airport &middot; Luxury SUV &middot; Up to 7 passengers</p>
 
-    <div class="carousel-container">
-      <button class="carousel-btn-prev" type="button" aria-label="Anterior">&#8249;</button>
+    <div class="snap-row snap-fade-edges no-scrollbar gap-6 pb-4 -mx-6 px-6">
+      <?php foreach ($popular_routes as $route): ?>
+        <article class="snap-item transfer-card w-72 sm:w-80 rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                 data-slug="<?= htmlspecialchars($route['slug']) ?>"
+                 data-one-way="<?= (float)$route['one_way_price'] ?>"
+                 data-round-trip="<?= (float)$route['round_trip_price'] ?>">
 
-      <div class="carousel" id="transferCarousel" data-carousel>
-        <div class="carousel-track">
+          <div class="relative h-52 overflow-hidden">
+            <img
+              src="<?= route_image_db($route, $remote_fallbacks) ?>"
+              alt="<?= htmlspecialchars($route['name']) ?> transfer"
+              loading="lazy"
+              class="w-full h-full object-cover"
+            >
+            <?php if (!empty($route['badge_text'])): ?>
+            <span class="absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full <?= $badgeColors[$route['badge_class']] ?? 'bg-navy text-white' ?>">
+              <?= htmlspecialchars($route['badge_text']) ?>
+            </span>
+            <?php endif; ?>
+          </div>
 
-          <?php foreach ($popular_routes as $route): ?>
+          <div class="p-5">
+            <h3 class="font-semibold text-lg text-navy mb-1"><?= htmlspecialchars($route['name']) ?></h3>
+            <p class="text-xs text-slate-500 mb-4 line-clamp-2"><?= htmlspecialchars($route['hotels_summary'] ?? '') ?></p>
 
-            <article class="card transfer-card"
-                     data-slug="<?= htmlspecialchars($route['slug']) ?>"
-                     data-one-way="<?= (float)$route['one_way_price'] ?>"
-                     data-round-trip="<?= (float)$route['round_trip_price'] ?>">
+            <div class="flex bg-slate-100 rounded-full p-1 mb-4 text-xs">
+              <input type="radio" name="trip-type-<?= htmlspecialchars($route['slug']) ?>" id="one-way-<?= htmlspecialchars($route['slug']) ?>" value="oneway" checked class="hidden peer/ow">
+              <label for="one-way-<?= htmlspecialchars($route['slug']) ?>" class="flex-1 text-center py-1.5 rounded-full font-medium cursor-pointer peer-checked/ow:bg-navy peer-checked/ow:text-white transition-colors">One way</label>
+              <input type="radio" name="trip-type-<?= htmlspecialchars($route['slug']) ?>" id="round-trip-<?= htmlspecialchars($route['slug']) ?>" value="roundtrip" class="hidden peer/rt">
+              <label for="round-trip-<?= htmlspecialchars($route['slug']) ?>" class="flex-1 text-center py-1.5 rounded-full font-medium cursor-pointer peer-checked/rt:bg-navy peer-checked/rt:text-white transition-colors">Round trip</label>
+            </div>
 
-              <div class="card-image">
-                <img
-                  src="<?= route_image_db($route, $remote_fallbacks) ?>"
-                  alt="<?= htmlspecialchars($route['name']) ?> transfer"
-                  loading="lazy"
-                  width="640"
-                  height="360"
-                >
-                <?php if (!empty($route['badge_text'])): ?>
-                <span class="card-badge <?= htmlspecialchars($route['badge_class'] ?? '') ?>">
-                  <?= htmlspecialchars($route['badge_text']) ?>
-                </span>
-                <?php endif; ?>
+            <div class="flex items-end justify-between">
+              <div>
+                <span class="js-price text-2xl font-bold text-navy">$<?= (int)$route['one_way_price'] ?></span>
+                <span class="text-xs text-slate-400 block">per SUV</span>
               </div>
-
-              <div class="card-content">
-                <h3 class="card-title"><?= htmlspecialchars($route['name']) ?></h3>
-                <p class="card-hotels"><?= htmlspecialchars($route['hotels_summary'] ?? '') ?></p>
-
-                <!-- Toggle one way / round trip -->
-                <div class="trip-toggle" role="group" aria-label="Trip type">
-                  <input type="radio"
-                         name="trip-type-<?= htmlspecialchars($route['slug']) ?>"
-                         id="one-way-<?= htmlspecialchars($route['slug']) ?>"
-                         value="oneway" checked>
-                  <label class="toggle-btn" for="one-way-<?= htmlspecialchars($route['slug']) ?>">One way</label>
-
-                  <input type="radio"
-                         name="trip-type-<?= htmlspecialchars($route['slug']) ?>"
-                         id="round-trip-<?= htmlspecialchars($route['slug']) ?>"
-                         value="roundtrip">
-                  <label class="toggle-btn" for="round-trip-<?= htmlspecialchars($route['slug']) ?>">Round trip</label>
-                </div>
-
-                <div class="card-footer">
-                  <div class="card-price-wrap">
-                    <span class="card-price js-price">$<?= (int)$route['one_way_price'] ?></span>
-                    <small class="card-price-note">per SUV</small>
-                  </div>
-                  <a href="pages/booking.php?zone=<?= urlencode($route['name']) ?>&type=oneway&price=<?= (int)$route['one_way_price'] ?>"
-                     class="btn btn-outline btn-sm js-book-link">
-                    Book now
-                  </a>
-                </div>
-
-              </div>
-            </article>
-
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-      <button class="carousel-btn-next" type="button" aria-label="Siguiente">&#8250;</button>
+              <a href="/pages/booking.php?zone=<?= urlencode($route['name']) ?>&type=oneway&price=<?= (int)$route['one_way_price'] ?>"
+                 class="js-book-link border border-navy text-navy text-sm font-medium px-4 py-2 rounded-lg hover:bg-navy hover:text-white transition-colors">
+                Book now
+              </a>
+            </div>
+          </div>
+        </article>
+      <?php endforeach; ?>
     </div>
-
-    <div class="carousel-indicators" role="tablist" aria-label="Transfer routes pages"></div>
 
   </div>
 </section>
 
 <script>
 (function () {
-    document.querySelectorAll('#transferCarousel .transfer-card').forEach(function (card) {
+    document.querySelectorAll('#transfers .transfer-card').forEach(function (card) {
         var oneWay    = parseFloat(card.dataset.oneWay);
         var roundTrip = parseFloat(card.dataset.roundTrip);
-        var zone      = card.querySelector('.card-title').textContent.trim();
+        var zone      = card.querySelector('h3').textContent.trim();
         var priceEl   = card.querySelector('.js-price');
         var linkEl    = card.querySelector('.js-book-link');
 
@@ -136,7 +111,7 @@ function route_image_db(array $route, array $remote_fallbacks): string {
                 var isOneWay = this.value === 'oneway';
                 var price    = isOneWay ? oneWay : roundTrip;
                 priceEl.textContent = '$' + price;
-                linkEl.href = 'pages/booking.php'
+                linkEl.href = '/pages/booking.php'
                     + '?zone='  + encodeURIComponent(zone)
                     + '&type='  + this.value
                     + '&price=' + price;

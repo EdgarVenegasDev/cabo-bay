@@ -1,11 +1,13 @@
-<section class="hero">
-  <video autoplay muted loop playsinline class="hero-video">
-    <source src="assets/media/video-header.mp4" type="video/mp4">
+<section class="hero relative h-screen min-h-[680px] overflow-hidden">
+  <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+    <source src="/assets/media/video-header.mp4" type="video/mp4">
   </video>
-  <div class="overlay"></div>
-  <div class="hero-content">
-    <h1>Cabo Bay</h1>
-    <p>Luxury Transfers & Unforgettable Experiences in Los Cabos</p>
+  <div class="absolute inset-0 z-10 bg-gradient-to-br from-black/60 to-black/40"></div>
+
+  <div class="relative z-20 h-full flex flex-col justify-center pl-8 lg:pl-24 max-w-full lg:max-w-[55%] px-6 lg:px-0">
+    <h1 class="font-serif text-white text-5xl lg:text-7xl font-bold drop-shadow-lg mb-4">Cabo Bay</h1>
+    <p class="text-white/90 text-lg lg:text-xl max-w-md">Luxury Transfers &amp; Unforgettable Experiences in Los Cabos</p>
   </div>
-  <?php include 'booking-form.php'; ?>
+
+  <?php include __DIR__ . '/booking-form.php'; ?>
 </section>

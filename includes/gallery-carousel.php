@@ -1,8 +1,4 @@
 <?php
-/**
- * includes/gallery-carousel.php
- * Carrusel de fotos subidas por el admin (admin/gallery.php).
- */
 require_once __DIR__ . '/../config/database.php';
 
 $gallery_photos = [];
@@ -18,40 +14,28 @@ try {
 ?>
 
 <?php if ($gallery_photos): ?>
-<section class="carousel-section" id="gallery">
-  <div class="container">
+<section class="py-20 bg-slate-50" id="gallery">
+  <div class="max-w-7xl mx-auto px-6">
 
-    <p class="section-eyebrow">Our experiences</p>
-    <h2 class="section-title">This is cabo bay</h2>
-    <p class="section-sub">True comfort for your travels</p>
+    <p class="text-coral text-sm font-semibold uppercase tracking-wider mb-2">Gallery</p>
+    <h2 class="font-serif text-4xl text-navy font-semibold mb-2">Los Cabos in pictures</h2>
+    <p class="text-slate-500 mb-10">A glimpse of the experiences waiting for you</p>
 
-    <div class="carousel-container">
-      <button class="carousel-btn-prev" type="button" aria-label="Anterior">&#8249;</button>
-
-      <div class="carousel" id="galleryCarousel" data-carousel>
-        <div class="carousel-track">
-          <?php foreach ($gallery_photos as $photo): ?>
-            <article class="card" style="width:300px; flex-shrink:0; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-              <img
-                src="/assets/media/gallery/<?= htmlspecialchars($photo['filename']) ?>"
-                alt="<?= htmlspecialchars($photo['alt_text'] ?? 'Cabo Bay gallery photo') ?>"
-                loading="lazy"
-                style="width:100%; height:220px; object-fit:cover; display:block;"
-              >
-              <?php if (!empty($photo['caption'])): ?>
-                <p style="padding:10px 12px; margin:0; font-size:0.85rem; color:#475569;">
-                    <?= htmlspecialchars($photo['caption']) ?>
-                </p>
-              <?php endif; ?>
-            </article>
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-      <button class="carousel-btn-next" type="button" aria-label="Siguiente">&#8250;</button>
+    <div class="snap-row snap-fade-edges no-scrollbar gap-5 pb-4 -mx-6 px-6">
+      <?php foreach ($gallery_photos as $photo): ?>
+        <article class="snap-item w-72 sm:w-80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 bg-white">
+          <img
+            src="/assets/media/gallery/<?= htmlspecialchars($photo['filename']) ?>"
+            alt="<?= htmlspecialchars($photo['alt_text'] ?? 'Cabo Bay gallery photo') ?>"
+            loading="lazy"
+            class="w-full h-56 object-cover"
+          >
+          <?php if (!empty($photo['caption'])): ?>
+            <p class="px-4 py-3 text-sm text-slate-500"><?= htmlspecialchars($photo['caption']) ?></p>
+          <?php endif; ?>
+        </article>
+      <?php endforeach; ?>
     </div>
-
-    <div class="carousel-indicators" role="tablist" aria-label="Gallery pages"></div>
 
   </div>
 </section>
