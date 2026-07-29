@@ -10,24 +10,24 @@ require __DIR__ . '/includes/admin-header.php';
 ?>
 
 <p class="text-sm text-gray-500 mb-5">
-    Las fotos que subas aca (y que esten "Activa") aparecen en el carrusel de galeria de la pagina principal,
-    en el orden que definas con las flechas.
+    Las fotos y videos que subas aca (y que esten "Activa") aparecen en el carrusel de galeria de la pagina principal,
+    en el orden que definas con las flechas. Los tamanos varian automaticamente para dar efecto de collage.
 </p>
 
 <div id="feedback" class="hidden px-4 py-2.5 rounded-lg mb-4 text-sm"></div>
 
 <section class="card mb-5 bg-gray-50">
-    <h4 class="text-sm font-semibold text-navy mb-3">Subir nueva foto</h4>
+    <h4 class="text-sm font-semibold text-navy mb-3">Subir foto, GIF o video</h4>
     <form id="uploadForm" enctype="multipart/form-data" class="flex gap-3 flex-wrap items-end">
         <div>
-            <label class="label-sm">Archivo (JPG, PNG o WEBP, max 5MB)</label>
-            <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="text-sm">
+            <label class="label-sm">Archivo (JPG, PNG, WEBP, GIF o MP4, max 20MB)</label>
+            <input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4" required class="text-sm">
         </div>
         <div>
             <label class="label-sm">Descripcion (opcional)</label>
             <input type="text" name="caption" placeholder="Ej: Atardecer en Cabo San Lucas" class="input-field min-w-56">
         </div>
-        <button type="submit" id="uploadBtn" class="btn-primary">Subir foto</button>
+        <button type="submit" id="uploadBtn" class="btn-primary">Subir</button>
     </form>
 </section>
 
@@ -35,9 +35,14 @@ require __DIR__ . '/includes/admin-header.php';
     <div id="galleryGrid" class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
         <?php foreach ($photos as $p): ?>
             <div class="photo-card border border-gray-200 rounded-lg overflow-hidden <?= !$p['is_active'] ? 'opacity-50' : '' ?>" data-id="<?= $p['id'] ?>">
-                <img src="/assets/media/gallery/<?= htmlspecialchars($p['filename']) ?>" alt="<?= htmlspecialchars($p['alt_text'] ?? '') ?>"
-                     class="w-full h-36 object-cover block">
+                <?php if ($p['media_type'] === 'video'): ?>
+                    <video src="/assets/media/gallery/<?= htmlspecialchars($p['filename']) ?>" class="w-full h-36 object-cover block" muted loop autoplay playsinline></video>
+                <?php else: ?>
+                    <img src="/assets/media/gallery/<?= htmlspecialchars($p['filename']) ?>" alt="<?= htmlspecialchars($p['alt_text'] ?? '') ?>"
+                         class="w-full h-36 object-cover block">
+                <?php endif; ?>
                 <div class="p-2.5">
+                    <p class="text-[10px] uppercase tracking-wide text-gray-400 mb-1"><?= $p['media_type'] === 'video' ? 'Video' : 'Imagen' ?></p>
                     <p class="text-xs text-gray-600 mb-2 min-h-4"><?= htmlspecialchars($p['caption'] ?? '') ?></p>
                     <div class="flex gap-1.5 items-center justify-between">
                         <div class="flex gap-1">
@@ -55,7 +60,7 @@ require __DIR__ . '/includes/admin-header.php';
         <?php endforeach; ?>
     </div>
     <?php if (!$photos): ?>
-        <p class="text-center text-gray-400 py-10">Todavia no subiste ninguna foto.</p>
+        <p class="text-center text-gray-400 py-10">Todavia no subiste nada.</p>
     <?php endif; ?>
 </section>
 
@@ -83,16 +88,16 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
         const result = await res.json();
 
         if (result.ok) {
-            showFeedback('Foto subida correctamente', true);
+            showFeedback('Subido correctamente', true);
             location.reload();
         } else {
             showFeedback('Error: ' + result.error, false);
         }
     } catch (err) {
-        showFeedback('Error de red al subir la foto', false);
+        showFeedback('Error de red al subir el archivo', false);
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Subir foto';
+        btn.textContent = 'Subir';
     }
 });
 
@@ -107,13 +112,13 @@ async function postAction(data) {
 
 document.querySelectorAll('.delete-photo').forEach(btn => {
     btn.addEventListener('click', async () => {
-        if (!confirm('Borrar esta foto? No se puede deshacer.')) return;
+        if (!confirm('Borrar este archivo? No se puede deshacer.')) return;
         const card = btn.closest('.photo-card');
         const id = card.dataset.id;
         const result = await postAction({ action: 'delete', id });
         if (result.ok) {
             card.remove();
-            showFeedback('Foto eliminada', true);
+            showFeedback('Eliminado', true);
         } else {
             showFeedback('Error: ' + result.error, false);
         }

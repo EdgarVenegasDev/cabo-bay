@@ -13,10 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $pdo    = Database::getConnection();
 $action = $_POST['action'] ?? '';
 
-const GALLERY_DIR   = __DIR__ . '/../assets/media/gallery/';
-const GALLERY_URL   = 'assets/media/gallery/';
-const MAX_SIZE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_MIME   = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+const GALLERY_DIR    = __DIR__ . '/../assets/media/gallery/';
+const GALLERY_URL    = 'assets/media/gallery/';
+const MAX_SIZE_BYTES  = 20 * 1024 * 1024; // 20MB (los videos pesan mas que fotos)
+const ALLOWED_IMAGE_MIME = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif'];
+const ALLOWED_VIDEO_MIME = ['video/mp4' => 'mp4'];
 
 try {
     switch ($action) {
@@ -29,23 +30,34 @@ try {
             $file = $_FILES['photo'];
 
             if ($file['size'] > MAX_SIZE_BYTES) {
-                throw new InvalidArgumentException('La imagen supera el maximo de 5MB.');
+                throw new InvalidArgumentException('El archivo supera el maximo de 20MB.');
             }
 
-            $imageInfo = getimagesize($file['tmp_name']);
-            if ($imageInfo === false) {
-                throw new InvalidArgumentException('El archivo no es una imagen valida.');
-            }
-            $realMime = $imageInfo['mime'];
-            if (!isset(ALLOWED_MIME[$realMime])) {
-                throw new InvalidArgumentException('Solo se permiten imagenes JPG, PNG o WEBP.');
+            // Validar el tipo REAL del archivo (no confiar en extension ni mime del navegador)
+            $finfo    = new finfo(FILEINFO_MIME_TYPE);
+            $realMime = $finfo->file($file['tmp_name']);
+
+            $mediaType = null;
+            $ext       = null;
+
+            if (isset(ALLOWED_IMAGE_MIME[$realMime])) {
+                // Doble chequeo: confirmar que realmente es una imagen decodificable
+                if (getimagesize($file['tmp_name']) === false) {
+                    throw new InvalidArgumentException('El archivo no es una imagen valida.');
+                }
+                $ext       = ALLOWED_IMAGE_MIME[$realMime];
+                $mediaType = 'image';
+            } elseif (isset(ALLOWED_VIDEO_MIME[$realMime])) {
+                $ext       = ALLOWED_VIDEO_MIME[$realMime];
+                $mediaType = 'video';
+            } else {
+                throw new InvalidArgumentException('Formato no soportado. Solo JPG, PNG, WEBP, GIF o MP4.');
             }
 
             if (!is_dir(GALLERY_DIR)) {
                 mkdir(GALLERY_DIR, 0755, true);
             }
 
-            $ext      = ALLOWED_MIME[$realMime];
             $filename = 'gal_' . bin2hex(random_bytes(8)) . '.' . $ext;
             $destPath = GALLERY_DIR . $filename;
 
@@ -59,11 +71,12 @@ try {
             $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(display_order), 0) FROM gallery_photos')->fetchColumn();
 
             $stmt = $pdo->prepare(
-                'INSERT INTO gallery_photos (filename, original_name, caption, alt_text, display_order, uploaded_by)
-                 VALUES (?, ?, ?, ?, ?, ?)'
+                'INSERT INTO gallery_photos (filename, media_type, original_name, caption, alt_text, display_order, uploaded_by)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)'
             );
             $stmt->execute([
                 $filename,
+                $mediaType,
                 $file['name'],
                 $caption ?: null,
                 $altText ?: null,
@@ -72,10 +85,11 @@ try {
             ]);
 
             echo json_encode([
-                'ok'       => true,
-                'id'       => $pdo->lastInsertId(),
-                'url'      => GALLERY_URL . $filename,
-                'caption'  => $caption,
+                'ok'         => true,
+                'id'         => $pdo->lastInsertId(),
+                'url'        => GALLERY_URL . $filename,
+                'media_type' => $mediaType,
+                'caption'    => $caption,
             ]);
             break;
 
