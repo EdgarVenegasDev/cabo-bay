@@ -76,7 +76,7 @@ The project was designed with scalability and maintainability in mind, separatin
 
 Modern landing page with integrated booking form.
 
-![Landing](docs/images/landing.webp)
+![Landing](images/landing.webp)
 
 
 
@@ -84,7 +84,7 @@ Modern landing page with integrated booking form.
 
 Customers can book airport transportation by selecting destination, travel type and travel date.
 
-![Booking](docs/images/booking.webp)
+![Booking](images/booking.mp4)
 
 
 
@@ -92,7 +92,7 @@ Customers can book airport transportation by selecting destination, travel type 
 
 Reservation confirmation including trip summary and pricing.
 
-![Confirmation](docs/images/confirmation.webp)
+![Confirmation](images/confirmation.webp)
 
 
 
@@ -100,7 +100,7 @@ Reservation confirmation including trip summary and pricing.
 
 Secure administration panel.
 
-![Login](docs/images/login.webp)
+![Login](images/login.webp)
 
 
 
@@ -108,7 +108,7 @@ Secure administration panel.
 
 Overview of current reservations, active zones and gallery content.
 
-![Dashboard](docs/images/dashboard.webp)
+![Dashboard](images/dashboard.webp)
 
 
 
@@ -121,7 +121,7 @@ Administrators can:
 - Update reservation status
 - Send confirmation emails
 
-![Reservations](docs/images/reservations.webp)
+![Reservations](images/reservations.webp)
 
 
 
@@ -137,7 +137,7 @@ Features include:
 - Popular destination configuration
 - Home page integration
 
-![Pricing](docs/images/pricing.webp)
+![Pricing](images/pricing.webp)
 
 
 
@@ -153,7 +153,7 @@ Supports:
 - Ordering
 - Visibility toggle
 
-![Gallery](docs/images/gallery.webp)
+![Gallery](images/gallery.webp)
 
 
 
