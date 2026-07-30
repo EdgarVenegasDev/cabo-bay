@@ -31,9 +31,9 @@ $sizePattern = [
 <section class="py-20 bg-slate-50" id="gallery">
   <div class="max-w-7xl mx-auto px-6">
 
-    <p class="text-coral text-sm font-semibold uppercase tracking-wider mb-2">Gallery</p>
-    <h2 class="font-serif text-4xl text-navy font-semibold mb-2">Los Cabos in pictures</h2>
-    <p class="text-slate-500 mb-10">A glimpse of the experiences waiting for you</p>
+    <p class="text-coral text-sm font-semibold uppercase tracking-wider mb-2">This is me</p>
+    <h2 class="font-serif text-4xl text-navy font-semibold mb-2">Our passion in our travels</h2>
+    <p class="text-slate-500 mb-10">A true comfort in your trips</p>
 
     <div class="snap-row snap-fade-edges no-scrollbar gap-5 pb-4 -mx-6 px-6 items-end">
       <?php foreach ($gallery_photos as $i => $photo): ?>
