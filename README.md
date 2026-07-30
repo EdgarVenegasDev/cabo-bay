@@ -20,7 +20,7 @@ Designed and developed from scratch, including the customer booking experience a
 
 # Live Website
 
-https://cabobayadmin.com/
+https://cabo-bay.com
 
 
 
