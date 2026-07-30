@@ -1,6 +1,16 @@
 <?php $current = basename($_SERVER['SCRIPT_NAME']); ?>
-<nav class="w-56 bg-navy text-white py-6 flex-shrink-0">
-    <div class="font-bold px-5 pb-6 text-lg tracking-tight">Cabo Bay Admin</div>
+<nav id="adminSidebar"
+     class="fixed inset-y-0 left-0 z-50 w-64 bg-navy text-white py-6 flex-shrink-0
+            transform -translate-x-full transition-transform duration-300 ease-in-out
+            lg:static lg:translate-x-0 lg:w-56">
+    <div class="flex items-center justify-between px-5 pb-6">
+        <div class="font-bold text-lg tracking-tight">Cabo Bay Admin</div>
+        <button id="sidebarClose" class="lg:hidden text-white/70 hover:text-white" aria-label="Cerrar menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
     <ul class="space-y-1">
         <?php
         $links = [

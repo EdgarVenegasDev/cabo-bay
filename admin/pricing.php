@@ -17,7 +17,7 @@ require __DIR__ . '/includes/admin-header.php';
 ?>
 
 <p class="text-sm text-gray-500 mb-5">
-    Cada zona alimenta dos cosas al mismo tiempo: el selector de precios en el formulario de reserva del sitio,
+    ojooo cada zona alimenta dos cosas al mismo tiempo: el selector de precios en el formulario de reserva del sitio,
     y (si esta marcada como "Destacar en home") el carrusel de "rutas mas populares" en la portada.
 </p>
 
@@ -25,7 +25,7 @@ require __DIR__ . '/includes/admin-header.php';
 
 <section class="card mb-5 bg-gray-50">
     <h4 class="text-sm font-semibold text-navy mb-3">Agregar nueva zona</h4>
-    <form id="addZoneForm" class="flex gap-2">
+    <form id="addZoneForm" class="flex flex-wrap gap-2">
         <input type="text" name="name" placeholder="Ej: Todos Santos Norte" required
                class="input-field max-w-xs">
         <button type="submit" class="btn-primary">+ Crear zona</button>
@@ -83,7 +83,7 @@ require __DIR__ . '/includes/admin-header.php';
             </div>
         </div>
 
-        <div class="flex items-center gap-2.5">
+        <div class="flex flex-wrap items-center gap-2.5">
             <button type="submit" class="btn-primary">Guardar cambios</button>
             <button type="button" class="delete-zone btn-danger-outline" data-zone-id="<?= $zone['id'] ?>" data-zone-name="<?= htmlspecialchars($zone['name']) ?>">
                 Borrar zona
@@ -104,7 +104,7 @@ require __DIR__ . '/includes/admin-header.php';
                 </li>
             <?php endforeach; ?>
         </ul>
-        <form class="add-area-form flex gap-2" data-zone-id="<?= $zone['id'] ?>">
+        <form class="add-area-form flex flex-wrap gap-2" data-zone-id="<?= $zone['id'] ?>">
             <input type="text" name="name" placeholder="Nombre del hotel nuevo" required class="input-field flex-1 max-w-sm text-sm">
             <button type="submit" class="btn-outline-navy text-sm">+ Agregar</button>
         </form>

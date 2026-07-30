@@ -38,9 +38,9 @@ require __DIR__ . '/includes/admin-header.php';
     </div>
 </section>
 
-<section class="card">
-    <h2 class="text-lg font-semibold text-navy mb-4">Ultimas reservas</h2>
-    <table class="w-full text-sm">
+<section class="card overflow-x-auto">
+    <h2 class="text-lg font-semibold text-navy mb-4">Últimas reservas</h2>
+    <table class="w-full text-sm min-w-[520px]">
         <thead>
             <tr class="text-left text-gray-500 border-b border-gray-100">
                 <th class="pb-2 font-medium">Nombre</th>
