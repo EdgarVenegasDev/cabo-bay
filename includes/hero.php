@@ -1,4 +1,4 @@
-<section class="hero relative h-screen min-h-[680px] overflow-hidden">
+<section class="hero relative min-h-screen overflow-hidden">
   <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0">
     <source src="/assets/media/video-header.mp4" type="video/mp4">
   </video>
