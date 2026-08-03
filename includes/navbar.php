@@ -27,14 +27,18 @@
   </button>
 </header>
 
-<div id="mobileMenu" class="fixed inset-0 bg-navy-dark z-[1100] hidden flex-col items-center justify-center gap-8 md:hidden">
-  <button id="navClose" class="absolute top-5 right-6 text-white p-2" aria-label="Cerrar menu">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+<!-- Overlay oscuro detras del panel -->
+<div id="mobileMenuOverlay" class="fixed inset-0 bg-black/50 z-[1050] opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"></div>
+
+<!-- Panel deslizante: 60% del ancho, entra desde la derecha -->
+<div id="mobileMenu" class="fixed top-0 right-0 h-full w-3/5 max-w-xs bg-navy-dark z-[1100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-center gap-7 px-8 md:hidden">
+  <button id="navClose" class="absolute top-5 right-5 text-white p-2" aria-label="Cerrar menu">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
   </button>
-  <a href="/index.php" class="mobile-nav-link text-white text-2xl font-serif font-medium">Home</a>
-  <a href="/index.php#transfers" class="mobile-nav-link text-white text-2xl font-serif font-medium">Transfers</a>
-  <a href="/pages/wedding.php" class="mobile-nav-link text-white text-2xl font-serif font-medium">Weddings</a>
-  <a href="/index.php#contact" class="mobile-nav-link text-white text-2xl font-serif font-medium">Contact</a>
+  <a href="/index.php" class="mobile-nav-link text-white text-xl font-serif font-medium">Home</a>
+  <a href="/index.php#transfers" class="mobile-nav-link text-white text-xl font-serif font-medium">Transfers</a>
+  <a href="/pages/wedding.php" class="mobile-nav-link text-white text-xl font-serif font-medium">Weddings</a>
+  <a href="/index.php#contact" class="mobile-nav-link text-white text-xl font-serif font-medium">Contact</a>
 </div>
