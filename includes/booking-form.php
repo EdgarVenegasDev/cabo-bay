@@ -28,7 +28,7 @@ try {
             max-lg:static max-lg:translate-y-0 max-lg:mx-auto max-lg:mt-8 max-lg:max-w-[90%]">
 <h3 class="font-serif text-2xl text-center text-navy mb-5">Book your transfer</h3>
 
-<form id="quickBookingForm" action="/pages/booking.php" method="GET" class="flex flex-col gap-3">
+<form id="quickBookingForm" action="/pages/booking.php" method="GET" class="flex flex-col gap-4">
 
 <select name="pickup_type" id="pickupType" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
 <option value="airport">Airport - Hotel (SJD)</option>
