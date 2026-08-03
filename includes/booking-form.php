@@ -24,8 +24,8 @@ try {
 }
 ?>
 
-<div class="booking-box absolute right-[5%] top-1/2 -translate-y-1/2 z-30 bg-white/98 backdrop-blur-md p-7 rounded-2xl w-full max-w-sm shadow-2xl border border-white/20
-            max-lg:relative max-lg:translate-y-0 max-lg:mx-auto max-lg:mt-2 max-lg:max-w-[90%]">
+<div class="booking-box relative z-30 bg-white/98 backdrop-blur-md p-7 rounded-2xl w-full max-w-[90%] mx-auto mt-2 shadow-2xl border border-white/20
+            lg:absolute lg:right-[5%] lg:top-1/2 lg:-translate-y-1/2 lg:mx-0 lg:mt-0 lg:max-w-sm">
 <h3 class="font-serif text-2xl text-center text-navy mb-5">Book your transfer</h3>
 
 <form id="quickBookingForm" action="/pages/booking.php" method="GET" class="flex flex-col gap-4">
