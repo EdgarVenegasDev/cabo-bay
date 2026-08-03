@@ -4,7 +4,7 @@
   </video>
   <div class="absolute inset-0 z-10 bg-gradient-to-br from-black/60 to-black/40"></div>
 
-  <div class="relative z-20 flex flex-col justify-center pl-8 lg:pl-24 max-w-full lg:max-w-[55%] px-6 lg:px-0 pt-28 pb-8 lg:pt-0 lg:pb-0 lg:h-full">
+  <div class="relative z-20 flex flex-col justify-center pl-8 lg:pl-24 max-w-full lg:max-w-[55%] px-6 lg:px-0 pt-28 pb-2 lg:pt-0 lg:pb-0 lg:h-full">
     <h1 class="font-serif text-white text-4xl sm:text-5xl lg:text-7xl font-bold drop-shadow-lg mb-4">Cabo Bay</h1>
     <p class="text-white/90 text-lg lg:text-xl max-w-md">Luxury Transfers &amp; Unforgettable Experiences in Los Cabos</p>
   </div>
