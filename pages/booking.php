@@ -1,6 +1,10 @@
 <?php
 require_once '../config/config.php';
 require_once '../config/database.php';
+require_once '../config/mercadopago.php';
+require_once '../includes/booking-helpers.php';
+
+$exchangeRate = get_usd_to_mxn_rate();
 
 $preSelectedArea = trim($_GET['area']          ?? '');
 $preSelectedZone = trim($_GET['zone']          ?? '');
@@ -71,7 +75,7 @@ function fmt_date(string $d): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/tailwind.css">
     <script src="/assets/js/booking.js" defer></script>
 </head>
@@ -240,16 +244,28 @@ function fmt_date(string $d): string {
                         </div>
 
                         <div>
-                            <label for="payment_method" class="text-sm font-medium text-slate-700 block mb-1.5">Payment method *</label>
-                            <select id="payment_method" name="payment_method" required
-                                    class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
-                                <option value="cash">Cash (upon arrival)</option>
-                            </select>
+                            <label class="text-sm font-medium text-slate-700 block mb-1.5">Payment method *</label>
+                            <div class="flex bg-slate-100 rounded-full p-1 max-w-xs mb-3">
+                                <input type="radio" name="payment_method" id="pay-cash" value="cash" checked class="hidden peer/cash">
+                                <label for="pay-cash" class="flex-1 text-center py-2 rounded-full text-sm font-medium cursor-pointer peer-checked/cash:bg-navy peer-checked/cash:text-white transition-colors">Cash</label>
+                                <input type="radio" name="payment_method" id="pay-card" value="card" <?= $priceEstimate ? '' : 'disabled' ?> class="hidden peer/card">
+                                <label for="pay-card" class="flex-1 text-center py-2 rounded-full text-sm font-medium cursor-pointer peer-checked/card:bg-navy peer-checked/card:text-white transition-colors <?= $priceEstimate ? '' : 'opacity-40 cursor-not-allowed' ?>">Card</label>
+                            </div>
+                            <?php if (!$priceEstimate): ?>
+                                <p class="text-xs text-amber-600 mb-3">Select your hotel/area above to enable card payment.</p>
+                            <?php endif; ?>
                         </div>
 
-                        <button type="submit" class="w-full bg-navy text-white font-semibold py-3.5 rounded-lg hover:bg-navy-dark hover:-translate-y-0.5 transition-all">
-                            Confirm booking
-                        </button>
+                        <div id="cashSubmitWrap">
+                            <button type="submit" class="w-full bg-navy text-white font-semibold py-3.5 rounded-lg hover:bg-navy-dark hover:-translate-y-0.5 transition-all">
+                                Confirm booking
+                            </button>
+                        </div>
+
+                        <div id="cardPaymentWrap" class="hidden">
+                            <div id="paymentBrick_container"></div>
+                            <p id="cardError" class="text-red-600 text-sm mt-2 hidden"></p>
+                        </div>
 
                     </form>
                 </div>
@@ -261,7 +277,6 @@ function fmt_date(string $d): string {
                             'Luxury SUV - up to 7 passengers',
                             'Private, non-shared transfer',
                             'Meet and greet at the airport',
-                            'Payment in cash to the driver',
                             'Email confirmation sent immediately',
                             'Free cancellation up to 24 hours prior',
                             'Flight monitoring included',
@@ -286,6 +301,101 @@ function fmt_date(string $d): string {
             </div>
         </div>
     </main>
+
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script>
+    (function () {
+        const form     = document.getElementById('fullBookingForm');
+        const payCash  = document.getElementById('pay-cash');
+        const payCard  = document.getElementById('pay-card');
+        const cashWrap = document.getElementById('cashSubmitWrap');
+        const cardWrap = document.getElementById('cardPaymentWrap');
+        const cardError = document.getElementById('cardError');
+
+        const MP_PUBLIC_KEY = <?= json_encode(MP_PUBLIC_KEY) ?>;
+        const rate     = <?= json_encode($exchangeRate) ?>;
+        const priceUsd = <?= json_encode($priceEstimate ?: 0) ?>;
+
+        let brickInitialized = false;
+
+        function togglePaymentUI() {
+            if (payCard.checked) {
+                cashWrap.classList.add('hidden');
+                cardWrap.classList.remove('hidden');
+                if (!brickInitialized) initBrick();
+            } else {
+                cashWrap.classList.remove('hidden');
+                cardWrap.classList.add('hidden');
+            }
+        }
+        payCash?.addEventListener('change', togglePaymentUI);
+        payCard?.addEventListener('change', togglePaymentUI);
+
+        form?.addEventListener('submit', function (e) {
+            if (payCard && payCard.checked) e.preventDefault();
+        });
+
+        async function initBrick() {
+            if (!priceUsd || !MP_PUBLIC_KEY) return;
+            brickInitialized = true;
+
+            const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'es-MX' });
+            const bricksBuilder = mp.bricks();
+            const amountMxn = Math.round(priceUsd * rate * 100) / 100;
+
+            await bricksBuilder.create('payment', 'paymentBrick_container', {
+                initialization: {
+                    amount: amountMxn,
+                },
+                customization: {
+                    paymentMethods: {
+                        creditCard: 'all',
+                        debitCard: 'all',
+                    },
+                },
+                callbacks: {
+                    onSubmit: ({ formData }) => {
+                        return new Promise((resolve, reject) => {
+                            if (!form.reportValidity()) {
+                                reject(new Error('Please complete all required fields.'));
+                                return;
+                            }
+                            cardError.classList.add('hidden');
+
+                            const fd = new FormData(form);
+                            fd.set('payment_method', 'card');
+                            fd.set('token', formData.token);
+                            fd.set('payment_method_id', formData.payment_method_id);
+                            fd.set('installments', formData.installments);
+                            if (formData.issuer_id) fd.set('issuer_id', formData.issuer_id);
+
+                            fetch('/api/process_card_payment.php', { method: 'POST', body: fd })
+                                .then(function (res) { return res.json(); })
+                                .then(function (result) {
+                                    if (result.ok) {
+                                        window.location.href = result.redirect;
+                                        resolve();
+                                    } else {
+                                        cardError.textContent = result.error || 'Payment failed. Please try again.';
+                                        cardError.classList.remove('hidden');
+                                        reject(new Error(result.error || 'payment failed'));
+                                    }
+                                })
+                                .catch(function (err) {
+                                    cardError.textContent = 'Network error. Please try again.';
+                                    cardError.classList.remove('hidden');
+                                    reject(err);
+                                });
+                        });
+                    },
+                    onError: (error) => {
+                        console.error('[MP Brick error]', error);
+                    },
+                },
+            });
+        }
+    })();
+    </script>
 
     <?php include '../includes/footer.php'; ?>
 </body>
