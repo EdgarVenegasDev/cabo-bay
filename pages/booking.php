@@ -354,6 +354,9 @@ function fmt_date(string $d): string {
                     },
                 },
                 callbacks: {
+                    onReady: () => {
+                        // El Brick ya terminó de cargar y se puede interactuar con el
+                    },
                     onSubmit: ({ formData }) => {
                         return new Promise((resolve, reject) => {
                             if (!form.reportValidity()) {
