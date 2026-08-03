@@ -18,6 +18,7 @@
             'bookings.php'  => 'Reservas',
             'pricing.php'   => 'Precios y viajes populares',
             'gallery.php'   => 'Galeria / Carrusel',
+            'settings.php'  => 'Configuracion de pagos',
         ];
         foreach ($links as $file => $label):
             $isActive = $current === $file;
