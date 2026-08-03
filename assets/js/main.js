@@ -9,24 +9,26 @@ window.addEventListener('scroll', () => {
 });
 
 (function () {
-  const toggle = document.getElementById('navToggle');
+  const toggle  = document.getElementById('navToggle');
   const closeBtn = document.getElementById('navClose');
-  const menu = document.getElementById('mobileMenu');
-  if (!toggle || !menu) return;
+  const menu    = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('mobileMenuOverlay');
+  if (!toggle || !menu || !overlay) return;
 
   function openMenu() {
-    menu.classList.remove('hidden');
-    menu.classList.add('flex');
+    menu.classList.remove('translate-x-full');
+    overlay.classList.remove('opacity-0', 'pointer-events-none');
     document.body.style.overflow = 'hidden';
   }
   function closeMenu() {
-    menu.classList.add('hidden');
-    menu.classList.remove('flex');
+    menu.classList.add('translate-x-full');
+    overlay.classList.add('opacity-0', 'pointer-events-none');
     document.body.style.overflow = '';
   }
 
   toggle.addEventListener('click', openMenu);
   closeBtn?.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
 
   menu.querySelectorAll('.mobile-nav-link').forEach(link => {
     link.addEventListener('click', closeMenu);
