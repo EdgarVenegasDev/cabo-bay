@@ -1,6 +1,6 @@
 <section class="hero relative min-h-screen lg:h-screen overflow-hidden">
   <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover z-0">
-    <source src="images/video-header.mp4" type="video/mp4">
+    <source src="/assets/media/video-header.mp4" type="video/mp4">
   </video>  
   <div class="absolute inset-0 z-10 bg-gradient-to-br from-black/60 to-black/40"></div>
 
