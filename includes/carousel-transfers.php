@@ -2,12 +2,12 @@
 require_once __DIR__ . '/../config/database.php';
 
 $remote_fallbacks = [
-    'cabo-san-lucas' => 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg',
-    'corridor'       => 'https://images.pexels.com/photos/36864765/pexels-photo-36864765.jpeg',
-    'san-jose'       => 'https://images.unsplash.com/photo-1512813195386-6cf811ad3542?w=640&q=80&fit=crop',
-    'pacific'        => 'https://images.pexels.com/photos/13201409/pexels-photo-13201409.jpeg',
-    'diamante'       => 'https://images.pexels.com/photos/17415445/pexels-photo-17415445.jpeg',
-    'villas'         => 'https://images.pexels.com/photos/19168388/pexels-photo-19168388.jpeg',
+    'cabo-san-lucas' => 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg?auto=compress&cs=tinysrgb&w=640',
+    'corridor'       => 'https://images.pexels.com/photos/36864765/pexels-photo-36864765.jpeg?auto=compress&cs=tinysrgb&w=640',
+    'san-jose'       => 'https://images.unsplash.com/photo-1512813195386-6cf811ad3542?w=640&q=80&fit=crop&auto=format',
+    'pacific'        => 'https://images.pexels.com/photos/13201409/pexels-photo-13201409.jpeg?auto=compress&cs=tinysrgb&w=640',
+    'diamante'       => 'https://images.pexels.com/photos/17415445/pexels-photo-17415445.jpeg?auto=compress&cs=tinysrgb&w=640',
+    'villas'         => 'https://images.pexels.com/photos/19168388/pexels-photo-19168388.jpeg?auto=compress&cs=tinysrgb&w=640',
 ];
 
 $popular_routes = [];
@@ -25,7 +25,7 @@ function route_image_db(array $route, array $remote_fallbacks): string {
     if (!empty($route['image_path']) && file_exists(__DIR__ . '/../' . $route['image_path'])) {
         return htmlspecialchars($route['image_path']);
     }
-    $fallback = $remote_fallbacks[$route['slug']] ?? 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg';
+    $fallback = $remote_fallbacks[$route['slug']] ?? 'https://images.pexels.com/photos/22912077/pexels-photo-22912077.jpeg?auto=compress&cs=tinysrgb&w=640';
     return htmlspecialchars($fallback);
 }
 
