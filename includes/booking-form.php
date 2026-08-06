@@ -30,13 +30,13 @@ try {
 
 <form id="quickBookingForm" action="/pages/booking.php" method="GET" class="flex flex-col gap-4">
 
-<select name="pickup_type" id="pickupType" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
+<select name="pickup_type" id="pickupType" required aria-label="Pickup type" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
 <option value="airport">Airport - Hotel (SJD)</option>
 <option value="hotel_airbnb">Hotel / Airbnb - Airport</option>
 </select>
 
 <div id="destinationGroup">
-<select name="area" id="destinationSelect" required disabled class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
+<select name="area" id="destinationSelect" required aria-label="Hotel or area" disabled class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
 <option value="">Select your hotel / area</option>
 <?php
 $currentZone = '';
@@ -64,7 +64,7 @@ data-round-trip="<?= (float)$a['roundTrip'] ?>"
 <label for="quick-roundtrip" class="flex-1 text-center py-2 rounded-full text-sm font-medium cursor-pointer text-slate-700 peer-checked/rt:bg-navy peer-checked/rt:text-white transition-colors">Round Trip</label>
 </div>
 
-<input type="date" name="date" id="date" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
+<input type="date" name="date" id="date" required aria-label="Service date" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
 
 <div id="returnSection" style="display:none">
 <input type="date" name="return_date" id="return_date" placeholder="Return date" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
