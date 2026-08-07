@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | Cabo Bay' : 'Cabo Bay - Luxury Airport Transfers in Los Cabos' ?></title>
-<meta name="description" content="<?= isset($metaDescription) ? htmlspecialchars($metaDescription) : 'Premium airport transfers and private transportation in Los Cabos. Luxury SUVs, professional drivers, 24/7 service. Book your Cabo San Lucas or San Jose del Cabo transfer online.' ?>">
+<title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | Cabo Bay' : 'Los Cabos Airport Transportation | Private Transfers | Cabo Bay' ?></title>
+<meta name="description" content="<?= isset($metaDescription) ? htmlspecialchars($metaDescription) : 'Los Cabos airport transportation and private airport transfers. Luxury SUV service from SJD airport to your hotel in Cabo San Lucas or San Jose del Cabo. Book online, 24/7 service.' ?>">
 <link rel="canonical" href="https://cabo-bay.com/index.php">
 <link rel="preload" href="/assets/media/hero-poster.webp" as="image">
 
