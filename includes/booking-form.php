@@ -35,26 +35,35 @@ try {
 <option value="hotel_airbnb">Hotel / Airbnb - Airport</option>
 </select>
 
-<div id="destinationGroup">
-<select name="area" id="destinationSelect" required aria-label="Hotel or area" disabled class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
-<option value="">Select your hotel / area</option>
-<?php
-$currentZone = '';
-foreach ($allAreas as $a):
-if ($currentZone !== $a['zone']):
-if ($currentZone !== '') echo '</optgroup>';
-echo '<optgroup label="' . htmlspecialchars($a['zone']) . '">';
-$currentZone = $a['zone'];
-endif;
-?>
-<option
-value="<?= htmlspecialchars($a['name']) ?>"
-data-zone="<?= htmlspecialchars($a['zone']) ?>"
-data-one-way="<?= (float)$a['oneWay'] ?>"
-data-round-trip="<?= (float)$a['roundTrip'] ?>"
-><?= htmlspecialchars($a['name']) ?></option>
-<?php endforeach; if ($currentZone) echo '</optgroup>'; ?>
-</select>
+
+<div id="destinationGroup" class="relative">
+    
+    <input type="text" id="destSearchInput" placeholder="Type your hotel or destination..." disabled required autocomplete="off"
+           class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy opacity-50 cursor-not-allowed">
+    
+    
+    <input type="hidden" name="area" id="destinationSelect">
+
+    
+    <div id="destDropdown" class="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-xl hidden z-50">
+        <?php
+        $currentZone = '';
+        foreach ($allAreas as $a):
+            if ($currentZone !== $a['zone']):
+                $currentZone = $a['zone'];
+        ?>
+            <div class="bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider select-none data-zone-group="<?= htmlspecialchars($currentZone) ?>"><?= htmlspecialchars($currentZone) ?></div>
+        <?php endif; ?>
+            <div class="dest-option px-4 py-2 text-sm text-slate-700 hover:bg-navy hover:text-white cursor-pointer transition-colors"
+                 data-value="<?= htmlspecialchars($a['name']) ?>"
+                 data-zone="<?= htmlspecialchars($a['zone']) ?>"
+                 data-one-way="<?= (float)$a['oneWay'] ?>"
+                 data-round-trip="<?= (float)$a['roundTrip'] ?>">
+                 <?= htmlspecialchars($a['name']) ?>
+            </div>
+        <?php endforeach; ?>
+        <div id="noResults" class="px-4 py-3 text-sm text-slate-400 text-center hidden">No destinations found</div>
+    </div>
 </div>
 
 <div class="flex bg-slate-100 rounded-full p-1">
@@ -86,15 +95,112 @@ class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outlin
 <h3 class="font-serif text-xl text-navy mb-2">We're here to help!</h3>
 <p class="text-sm text-gray-500 mb-4">For pickups from hotels or Airbnbs, please contact us directly and we'll arrange everything.</p>
 <p class="text-sm mb-1"><strong>WhatsApp:</strong>
-<a href="https://wa.me/<?= defined('WHATSAPP_NUMBER') ? WHATSAPP_NUMBER : '5218009411956' ?>" class="text-navy">
-<?= defined('WHATSAPP_FORMATTED') ? WHATSAPP_FORMATTED : '+52 1 800 941 1956' ?>
+<a href="https://wa.me/<?= defined('WHATSAPP_NUMBER') ? WHATSAPP_NUMBER : '+526241193290' ?>" class="text-navy">
+<?= defined('WHATSAPP_FORMATTED') ? WHATSAPP_FORMATTED : '+52 624 119 3290' ?>
 </a>
 </p>
 <p class="text-sm mb-5"><strong>Email:</strong>
-<a href="mailto:<?= defined('INFO_EMAIL') ? INFO_EMAIL : 'info@cabo-bay.com' ?>" class="text-navy">
-<?= defined('INFO_EMAIL') ? INFO_EMAIL : 'info@cabo-bay.com' ?>
+<a href="mailto:<?= defined('INFO_EMAIL') ? INFO_EMAIL : 'cabo.bay.transfers@gmail.com' ?>" class="text-navy">
+<?= defined('INFO_EMAIL') ? INFO_EMAIL : 'cabo.bay.transfers@gmail.com' ?>
 </a>
 </p>
 <button class="bg-navy text-white px-6 py-2.5 rounded-lg font-medium hover:bg-navy-dark transition-colors" onclick="closeModal()">Close</button>
 </div>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pickupType = document.getElementById('pickupType');
+    const searchInput = document.getElementById('destSearchInput');
+    const hiddenInput = document.getElementById('destinationSelect');
+    const dropdown = document.getElementById('destDropdown');
+    const options = document.querySelectorAll('.dest-option');
+    const zoneHeaders = document.querySelectorAll('[data-zone-group]');
+    const noResults = document.getElementById('noResults');
+    const zoneHidden = document.getElementById('zoneHidden');
+
+    
+    pickupType.addEventListener('change', function() {
+        if (this.value === 'airport') {
+            searchInput.disabled = false;
+            searchInput.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            searchInput.disabled = true;
+            searchInput.value = '';
+            hiddenInput.value = '';
+            zoneHidden.value = '';
+            searchInput.classList.add('opacity-50', 'cursor-not-allowed');
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    
+    searchInput.addEventListener('focus', function() {
+        if (!this.disabled) dropdown.classList.remove('hidden');
+    });
+
+    
+    document.addEventListener('click', function(e) {
+        if (!document.getElementById('destinationGroup').contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    
+    searchInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase().trim();
+        let hasMatches = false;
+        
+        
+        const visibleZones = {};
+
+        options.forEach(opt => {
+            const text = opt.textContent.toLowerCase();
+            const zone = opt.getAttribute('data-zone');
+            
+            if (text.includes(filter)) {
+                opt.classList.remove('hidden');
+                visibleZones[zone] = true;
+                hasMatches = true;
+            } else {
+                opt.classList.add('hidden');
+            }
+        });
+
+        
+        zoneHeaders.forEach(header => {
+            const zoneName = header.getAttribute('data-zone-group');
+            if (visibleZones[zoneName]) {
+                header.classList.remove('hidden');
+            } else {
+                header.classList.add('hidden');
+            }
+        });
+
+        
+        if (hasMatches) {
+            noResults.classList.add('hidden');
+        } else {
+            noResults.classList.remove('hidden');
+        }
+    });
+
+    
+    options.forEach(opt => {
+        opt.addEventListener('click', function() {
+            const val = this.getAttribute('data-value');
+            const zone = this.getAttribute('data-zone');
+
+            searchInput.value = val;
+            hiddenInput.value = val;
+            zoneHidden.value = zone;
+
+            
+            hiddenInput.dispatchEvent(new Event('change'));
+
+            dropdown.classList.add('hidden');
+        });
+    });
+});
+</script>
