@@ -296,29 +296,49 @@ function fmt_date(string $d): string {
                 </div>
 
                 <aside class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 lg:sticky lg:top-28">
-                    <h3 class="font-semibold text-navy mb-4">Important information</h3>
-                    <ul class="space-y-2.5 text-sm text-slate-600">
+                    
+                    <div class="border-b border-slate-100 pb-3 mb-5">
+                        <h3 class="font-serif text-base font-semibold text-navy tracking-wide uppercase">Important Information</h3>
+                    </div>
+                    
+                    
+                    <ul class="space-y-3.5 text-sm text-slate-500">
                         <?php foreach ([
-                            'Luxury SUV - up to 7 passengers',
-                            'Private, non-shared transfer',
-                            'Meet and greet at the airport',
-                            'Email confirmation sent immediately',
-                            'Free cancellation up to 24 hours prior',
-                            'Flight monitoring included',
+                            'Luxury SUV &mdash; up to 7 passengers',
+                            'Private, non-shared premium transfer',
+                            'Professional meet & greet at the airport',
+                            'Instant email confirmation secure booking',
+                            'Flexible cancellation up to 24h prior',
+                            'Real-time flight monitoring included',
                         ] as $item): ?>
-                        <li class="flex items-start gap-2">
-                            <span class="text-navy font-bold mt-0.5">v</span>
-                            <span><?= htmlspecialchars($item) ?></span>
+                        <li class="flex items-start gap-3 group">
+                            
+                            <span class="flex-shrink-0 text-navy mt-0.5 transition-transform group-hover:scale-110 duration-200">
+                                <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </span>
+                            <span class="font-medium text-slate-600 transition-colors group-hover:text-navy duration-200"><?= $item ?></span>
                         </li>
                         <?php endforeach; ?>
                     </ul>
 
                     <?php if ($priceEstimate): ?>
-                    <div class="bg-slate-50 rounded-xl p-5 mt-6">
-                        <h3 class="font-semibold text-navy text-sm mb-2">Price breakdown</h3>
-                        <p class="text-sm text-slate-600 mb-1"><strong class="text-slate-800">Vehicle:</strong> Luxury SUV</p>
-                        <p class="text-sm text-slate-600 mb-3"><strong class="text-slate-800">Trip type:</strong> <?= $isRound ? 'Round Trip' : 'One Way' ?></p>
-                        <p class="text-2xl font-bold text-navy">$<?= number_format($priceEstimate, 2) ?> USD</p>
+                    
+                    <div class="mt-6 pt-5 border-t border-slate-100">
+                        <div class="bg-slate-50/50 rounded-xl p-4 border border-slate-100">
+                            <h4 class="font-serif text-xs font-semibold text-navy/70 uppercase tracking-wider mb-2.5">Price breakdown</h4>
+                            <div class="space-y-1.5 text-xs text-slate-500 mb-3.5">
+                                <div class="flex justify-between"><span>Vehicle</span><span class="font-medium text-slate-700">Luxury SUV</span></div>
+                                <div class="flex justify-between"><span>Service</span><span class="font-medium text-slate-700"><?= $isRound ? 'Round Trip' : 'One Way' ?></span></div>
+                            </div>
+                            <div class="flex items-baseline justify-between pt-2 border-t border-slate-100">
+                                <span class="text-xs font-semibold text-navy uppercase tracking-wider">Total</span>
+                                <p class="text-2xl font-bold text-navy tracking-tight">
+                                    $<?= number_format($priceEstimate, 2) ?><span class="text-xs font-medium text-slate-400 ml-1">USD</span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                     <?php endif; ?>
                 </aside>
