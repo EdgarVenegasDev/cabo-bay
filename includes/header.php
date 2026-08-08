@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | Cabo Bay' : 'Los Cabos Airport Transportation | Private Transfers | Cabo Bay' ?></title>
 <meta name="description" content="<?= isset($metaDescription) ? htmlspecialchars($metaDescription) : 'Los Cabos airport transportation and private airport transfers. Luxury SUV service from SJD airport to your hotel in Cabo San Lucas or San Jose del Cabo. Book online, 24/7 service.' ?>">
+<link rel="icon" type="image/svg+xml" href="/assets/media/logoS_R.svg">
 <link rel="canonical" href="https://cabo-bay.com/index.php">
 <link rel="preload" href="/assets/media/hero-poster.webp" as="image">
 
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Jost:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Jost:wght@300;400;500;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="/assets/css/tailwind.css">
 
 <script type="application/ld+json">

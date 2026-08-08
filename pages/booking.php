@@ -75,14 +75,15 @@ function fmt_date(string $d): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Jost:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Jost:wght@300;400;500;600;700&display=swap"></noscript>
     <link rel="stylesheet" href="/assets/css/tailwind.css">
     <script src="/assets/js/booking.js" defer></script>
 </head>
 <body class="font-sans text-slate-900 antialiased bg-slate-50">
     <?php include '../includes/navbar.php'; ?>
 
-    <main class="pt-32 pb-16 px-6">
+    <main class="pt-32 pb-56 px-6 md_pb-66">
         <div class="max-w-6xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
@@ -90,29 +91,53 @@ function fmt_date(string $d): string {
                     <h1 class="font-serif text-3xl font-bold text-navy mb-6">Complete your booking</h1>
 
                     <?php if ($selectedZoneObj): ?>
-                    <div class="bg-slate-50 rounded-xl border-l-4 border-navy p-5 mb-6">
-                        <h3 class="font-semibold text-navy text-sm mb-3">Booking summary</h3>
-                        <div class="space-y-1.5 text-sm text-slate-600">
-                            <?php if ($preSelectedArea): ?>
-                            <p><strong class="text-slate-800">Destination:</strong> <?= htmlspecialchars($preSelectedArea) ?></p>
-                            <?php endif; ?>
-                            <p><strong class="text-slate-800">Zone:</strong> <?= htmlspecialchars($selectedZoneObj['name']) ?></p>
-                            <p><strong class="text-slate-800">Trip type:</strong> <?= $isRound ? 'Round Trip' : 'One Way' ?></p>
-                            <p><strong class="text-slate-800">Passengers:</strong> <?= (int)$passengers ?></p>
-                            <?php if ($preServiceDate): ?>
-                            <p><strong class="text-slate-800">Departure date:</strong> <?= htmlspecialchars(fmt_date($preServiceDate)) ?></p>
-                            <?php endif; ?>
-                            <?php if ($isRound && $preReturnDate): ?>
-                            <p><strong class="text-slate-800">Return date:</strong> <?= htmlspecialchars(fmt_date($preReturnDate)) ?></p>
-                            <?php endif; ?>
-                            <?php if ($priceEstimate): ?>
-                            <p class="pt-1"><strong class="text-slate-800">Estimated price:</strong>
-                                <span class="text-lg font-bold text-navy">$<?= number_format($priceEstimate, 2) ?> USD</span>
-                            </p>
-                            <?php endif; ?>
+                        <div class="rounded-2xl overflow-hidden border border-navy-light shadow-sm mb-6">
+                            <div class="bg-navy px-6 py-5 flex items-center justify-between gap-4">
+                                <div class="min-w-0">
+                                    <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Your transfer</p>
+                                    <p class="text-white font-semibold text-lg truncate"><?= htmlspecialchars($preSelectedArea ?: $selectedZoneObj['name']) ?></p>
+                                </div>
+                                <?php if ($priceEstimate): ?>
+                                <div class="text-right flex-shrink-0">
+                                    <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Total</p>
+                                    <p class="text-white font-bold text-3xl leading-none">$<?= number_format($priceEstimate, 0) ?><span class="text-sm font-medium text-white/70"> USD</span></p>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="bg-navy-light/25 divide-y divide-navy-light">
+                                <?php if ($preSelectedArea): ?>
+                                <div class="flex justify-between items-center px-6 py-3">
+                                    <span class="text-xs uppercase tracking-wide text-slate-500">Destination</span>
+                                    <span class="text-sm font-semibold text-navy"><?= htmlspecialchars($preSelectedArea) ?></span>
+                                </div>
+                                <?php endif; ?>
+                                <div class="flex justify-between items-center px-6 py-3">
+                                    <span class="text-xs uppercase tracking-wide text-slate-500">Zone</span>
+                                    <span class="text-sm font-semibold text-navy"><?= htmlspecialchars($selectedZoneObj['name']) ?></span>
+                                </div>
+                                <div class="flex justify-between items-center px-6 py-3">
+                                    <span class="text-xs uppercase tracking-wide text-slate-500">Trip type</span>
+                                    <span class="text-sm font-semibold text-navy"><?= $isRound ? 'Round Trip' : 'One Way' ?></span>
+                                </div>
+                                <div class="flex justify-between items-center px-6 py-3">
+                                    <span class="text-xs uppercase tracking-wide text-slate-500">Passengers</span>
+                                    <span class="text-sm font-semibold text-navy"><?= (int)$passengers ?></span>
+                                </div>
+                                <?php if ($preServiceDate): ?>
+                                <div class="flex justify-between items-center px-6 py-3">
+                                    <span class="text-xs uppercase tracking-wide text-slate-500">Departure</span>
+                                    <span class="text-sm font-semibold text-navy"><?= htmlspecialchars(fmt_date($preServiceDate)) ?></span>
+                                </div>
+                                <?php endif; ?>
+                                <?php if ($isRound && $preReturnDate): ?>
+                                <div class="flex justify-between items-center px-6 py-3">
+                                    <span class="text-xs uppercase tracking-wide text-slate-500">Return</span>
+                                    <span class="text-sm font-semibold text-navy"><?= htmlspecialchars(fmt_date($preReturnDate)) ?></span>
+                                </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                    </div>
-                    <?php endif; ?>
+                        <?php endif; ?>
 
                     <form id="fullBookingForm" action="/api/process_booking.php" method="POST" class="space-y-5">
 

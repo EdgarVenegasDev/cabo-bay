@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0b2b4f;
-  --color-navy-dark: #061a30;
-  --color-coral: #e0703f;
-  --color-coral-dark: #c85a2c;
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --color-navy: #688585;
+  --color-navy-dark: #4d6363;
+  --color-coral: #688585;
+  --color-coral-dark: #4d6363;
+  --font-sans: "Jost", system-ui, -apple-system, sans-serif;
 }
 
 @layer components {
