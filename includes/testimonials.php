@@ -6,7 +6,7 @@ $testimonials = [
 ];
 ?>
 
-<section class="py-20" id="testimonials pb-60 md:pb-60">
+<section class="py-20" id="testimonials pb-80 md:pb-80">
   <div class="max-w-7xl mx-auto px-6">
 
     <p class="text-coral text-sm font-semibold uppercase tracking-wider mb-2">TripAdvisor reviews</p>
