@@ -38,9 +38,8 @@ try {
 
 <div id="destinationGroup" class="relative">
     
-    <input type="text" id="destSearchInput" placeholder="Type your hotel or destination..." disabled required autocomplete="off"
-           class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy opacity-50 cursor-not-allowed">
-    
+    <input type="text" id="destSearchInput" placeholder="Type your hotel or destination..." required autocomplete="off"
+       class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy">
     
     <input type="hidden" name="area" id="destinationSelect">
 
