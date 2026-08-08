@@ -1,6 +1,6 @@
 <header class="navbar fixed top-0 left-0 w-full z-[1000] px-6 lg:px-10 py-4 flex justify-between items-center transition-all duration-300">
   <a href="/index.php" class="logo inline-flex items-center gap-3 font-serif text-2xl font-semibold text-white tracking-tight">
-    <img src="/assets/media/logoS.svg" alt="Cabo Bay Logo" class="h-8 w-auto">
+    <img src="/assets/media/logoB.svg" alt="Cabo Bay Logo" class="h-8 w-auto">
     <span>Cabo Bay</span>
   </a>
 

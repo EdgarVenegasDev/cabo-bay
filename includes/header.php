@@ -7,11 +7,22 @@
 <meta name="description" content="<?= isset($metaDescription) ? htmlspecialchars($metaDescription) : 'Los Cabos airport transportation and private airport transfers. Luxury SUV service from SJD airport to your hotel in Cabo San Lucas or San Jose del Cabo. Book online, 24/7 service.' ?>">
 <link rel="icon" type="image/svg+xml" href="/assets/media/logoS_R.svg">
 <link rel="canonical" href="https://cabo-bay.com/index.php">
+
+
 <link rel="preload" href="/assets/media/hero-poster.webp" as="image">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+
+<link rel="preload" href="/assets/css/tailwind.css" as="style">
+<link rel="stylesheet" href="/assets/css/tailwind.css">
+
 
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Jost:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Jost:wght@300;400;500;600;700&display=swap"></noscript>
-<link rel="stylesheet" href="/assets/css/tailwind.css">
+
 
 <script type="application/ld+json">
 {
